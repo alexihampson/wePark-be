@@ -1,0 +1,5 @@
+DROP DATABASE IF EXISTS wepark_test;
+DROP DATABASE IF EXISTS wepark;
+
+CREATE DATABASE wepark_test;
+CREATE DATABASE wepark;
