@@ -2,6 +2,7 @@ const express = require("express");
 const apiRouter = require("./routes/api-router");
 const cors = require("cors");
 const AWS = require("aws-sdk");
+const { badGeometry, badRequest } = require("./server.errors");
 
 if (
   !process.env.AWS_S3_ACCESS_KEY_ID ||
@@ -27,6 +28,10 @@ app.all("/*", (req, res) => {
 });
 
 //-----//-----// Error Handlers //-----//-----//
+
+app.use(badRequest);
+
+app.use(badGeometry);
 
 app.use((err, req, res, next) => {
   console.log(err);
