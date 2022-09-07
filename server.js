@@ -2,7 +2,8 @@ const express = require("express");
 const apiRouter = require("./routes/api-router");
 const cors = require("cors");
 const AWS = require("aws-sdk");
-const { badGeometry, badRequest } = require("./server.errors");
+const { customErrors, psqlErrors, badGeometry, badRequest } = require("./server.errors");
+const {  } = require("./server.errors");
 
 if (
   !process.env.AWS_S3_ACCESS_KEY_ID ||
@@ -11,6 +12,7 @@ if (
 ) {
   require("dotenv").config({ path: `${__dirname}/.env.aws_config` });
 }
+
 
 const s3 = new AWS.S3({
   accessKeyId: process.env.AWS_S3_ACCESS_KEY_ID,
@@ -28,6 +30,9 @@ app.all("/*", (req, res) => {
 });
 
 //-----//-----// Error Handlers //-----//-----//
+app.use(customErrors); 
+
+app.use(psqlErrors); 
 
 app.use(badRequest);
 
@@ -37,6 +42,7 @@ app.use((err, req, res, next) => {
   console.log(err);
   res.sendStatus(500);
 });
+ 
 
 //-----// No More Error Handlers //-----//
 

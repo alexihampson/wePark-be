@@ -1,6 +1,10 @@
 const spotRouter = require("express").Router();
-const { getAllSpots } = require("../controllers/spots");
+const { getSpotBySpotId, getAllSpots } = require("../controllers/spots")
 
 spotRouter.route("/").get(getAllSpots);
+
+spotRouter
+    .route("/:spot_id")
+    .get(getSpotBySpotId); 
 
 module.exports = spotRouter;
