@@ -1,3 +1,11 @@
+exports.customErrors = (err, req, res, next) => {
+  if (err.status) {
+    res.status(err.status).send({ msg: err.msg });
+  } else {
+    next(err);
+  }
+};
+
 exports.badRequest = (err, req, res, next) => {
   if (err.code === "42703") {
     res.status(400).send({ msg: "Query Error" });

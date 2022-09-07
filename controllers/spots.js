@@ -1,4 +1,4 @@
-const { selectAllSpots } = require("../models/spots");
+const { selectAllSpots, insertSpot } = require("../models/spots");
 
 exports.getAllSpots = (req, res, next) => {
   const { query } = req;
@@ -9,6 +9,15 @@ exports.getAllSpots = (req, res, next) => {
   selectAllSpots(long, lat, radius, query.type)
     .then((spots) => {
       res.status(200).send({ spots });
+    })
+    .catch(next);
+};
+
+exports.postSpot = (req, res, next) => {
+  insertSpot(req.body, req.files)
+    .then(([spot, images]) => {
+      spot.images = images;
+      res.status(201).send({ spot });
     })
     .catch(next);
 };

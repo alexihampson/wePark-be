@@ -30,7 +30,7 @@ describe("/api/spots", () => {
         .get("/api/spots")
         .expect(200)
         .then((res) => {
-          expect(res.body.spots.length).toBe(10);
+          expect(res.body.spots.length).toBeLessThanOrEqual(20);
           res.body.spots.forEach((spot) => {
             expect(spot.spot_id).toEqual(expect.any(Number));
             expect(spot.name).toEqual(expect.any(String));
