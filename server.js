@@ -6,6 +6,7 @@ const {
   badRequest,
   customErrors,
   sqlForeignKeyConstraint,
+  psqlErrors,
 } = require("./server.errors");
 const bodyParser = require("body-parser");
 
@@ -21,6 +22,9 @@ app.all("/*", (req, res) => {
 });
 
 //-----//-----// Error Handlers //-----//-----//
+app.use(customErrors);
+
+app.use(psqlErrors);
 
 app.use(customErrors);
 
