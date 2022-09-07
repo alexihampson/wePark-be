@@ -59,6 +59,7 @@ const seed = async ({ userData, spotData, imageData, commentData, favouritesData
         isBusy BOOLEAN NOT NULL DEFAULT FALSE,
         change_time TIMESTAMP DEFAULT NOW()
       );`);
+
   const userQueryStr = format(
     "INSERT INTO users (username, avatar_url, about, email) VALUES %L RETURNING *;",
     userData.map(({ username, avatar_url, about, email }) => [username, avatar_url, about, email])
