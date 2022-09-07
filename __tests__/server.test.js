@@ -105,7 +105,7 @@ describe("/api/spots", () => {
           expect(spot.created_at).toEqual(expect.any(String));
           expect(spot.isbusy).toEqual(expect.any(Boolean));
           expect(spot.lastchanged).toEqual(expect.any(String));
-          expect(spot.images).toEqual(expect.any(Array));
+          expect(spot.images).toEqual(expect.any(String));
         });
     });
 
@@ -137,7 +137,7 @@ describe("/api/spots", () => {
           expect(spot.created_at).toEqual(expect.any(String));
           expect(spot.isbusy).toEqual(expect.any(Boolean));
           expect(spot.lastchanged).toEqual(expect.any(String));
-          expect(spot.images).toEqual(expect.any(Array));
+          expect(spot.images).toEqual(expect.any(String));
         });
     });
 

@@ -103,5 +103,5 @@ exports.insertSpot = async (body, images) => {
 
   delete Object.assign(row, { ["coords"]: row["location"] })["location"];
 
-  return [row, imageRows.map((row) => row.rows[0].image_url)];
+  return [row, imageRows.map((row) => row.rows[0].image_url).join(",")];
 };
