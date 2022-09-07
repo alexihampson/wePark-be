@@ -92,7 +92,6 @@ describe("/api/spots", () => {
         .expect(201)
         .then((res) => {
           let spot = res.body.spot;
-          console.log(spot);
           expect(spot.spot_id).toEqual(expect.any(Number));
           expect(spot.name).toEqual(expect.any(String));
           expect(spot.coords).toEqual(expect.any(String));
