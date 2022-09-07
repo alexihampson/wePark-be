@@ -1,7 +1,12 @@
 const express = require("express");
 const apiRouter = require("./routes/api-router");
 const cors = require("cors");
-const { badGeometry, badRequest, customErrors } = require("./server.errors");
+const {
+  badGeometry,
+  badRequest,
+  customErrors,
+  sqlForeignKeyConstraint,
+} = require("./server.errors");
 const bodyParser = require("body-parser");
 
 const app = express();
@@ -22,6 +27,8 @@ app.use(customErrors);
 app.use(badRequest);
 
 app.use(badGeometry);
+
+app.use(sqlForeignKeyConstraint);
 
 app.use((err, req, res, next) => {
   console.log(err);

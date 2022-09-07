@@ -21,3 +21,15 @@ exports.badGeometry = (err, req, res, next) => {
     next(err);
   }
 };
+
+exports.sqlForeignKeyConstraint = (err, req, res, next) => {
+  if (err.code === "23503") {
+    if (err.table === "spots") {
+      res.status(400).send({ msg: "Body Invalid" });
+    } else {
+      res.status(404).send({ msg: "ID not found" });
+    }
+  } else {
+    next(err);
+  }
+};

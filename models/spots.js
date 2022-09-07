@@ -50,6 +50,8 @@ exports.selectAllSpots = async (long, lat, radius, type) => {
 };
 
 exports.insertSpot = async (body, images) => {
+  if (!images) images = [];
+
   if (!body.coords || !body.name || !body.creator || !body.parking_type)
     return Promise.reject({ status: 400, msg: "Body Invalid" });
 
@@ -99,5 +101,7 @@ exports.insertSpot = async (body, images) => {
     )
   );
 
-  return [row, imageRows.map((row) => row.rows[0].image_url).join(",")];
+  delete Object.assign(row, { ["coords"]: row["location"] })["location"];
+
+  return [row, imageRows.map((row) => row.rows[0].image_url)];
 };
