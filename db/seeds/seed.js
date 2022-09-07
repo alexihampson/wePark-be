@@ -9,8 +9,6 @@ const seed = async ({ userData, spotData, imageData, commentData, favouritesData
   await db.query(`DROP TABLE IF EXISTS spots;`);
   await db.query(`DROP TABLE IF EXISTS users;`);
 
-  console.log("delete");
-
   await db.query(`CREATE TABLE users (
     username VARCHAR PRIMARY KEY,
     avatar_url VARCHAR,
@@ -61,7 +59,6 @@ const seed = async ({ userData, spotData, imageData, commentData, favouritesData
         isBusy BOOLEAN NOT NULL DEFAULT FALSE,
         change_time TIMESTAMP DEFAULT NOW()
       );`);
-  console.log("create");
   const userQueryStr = format(
     "INSERT INTO users (username, avatar_url, about, email) VALUES %L RETURNING *;",
     userData.map(({ username, avatar_url, about, email }) => [username, avatar_url, about, email])
