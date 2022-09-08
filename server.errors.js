@@ -8,7 +8,7 @@ exports.customErrors = (err, req, res, next) => {
 
 exports.psqlErrors = (err, req, res, next) => {
   if (err.code === "22P02") {
-    res.status(400).send({ msg: "Bad request" });
+    res.status(400).send({ msg: "Bad Request" });
   } else {
     next(err);
   }
@@ -35,10 +35,10 @@ exports.sqlForeignKeyConstraint = (err, req, res, next) => {
     if (err.table === "spots") {
       res.status(400).send({ msg: "Body Invalid" });
     } else if (err.table === "images") {
-        console.log(err);
-        res.status(200).send()
+      console.log(err);
+      res.status(200).send();
     } else {
-        res.status(404).send({ msg: "ID not found" });
+      res.status(404).send({ msg: "ID Not Found" });
     }
   } else {
     next(err);
