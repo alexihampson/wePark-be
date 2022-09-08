@@ -6,7 +6,7 @@ const {
   deleteSpotBySpotId,
   patchSpotBySpotId,
 } = require("../controllers/spots");
-const { getCommentsBySpot } = require("../controllers/comments");
+const { getCommentsBySpot, postCommentsBySpot } = require("../controllers/comments");
 const multer = require("multer");
 
 const storage = multer.memoryStorage();
@@ -20,6 +20,6 @@ spotRouter
   .delete(deleteSpotBySpotId)
   .patch(patchSpotBySpotId);
 
-spotRouter.route("/:spot_id/comments").get(getCommentsBySpot);
+spotRouter.route("/:spot_id/comments").get(getCommentsBySpot).post(postCommentsBySpot);
 
 module.exports = spotRouter;

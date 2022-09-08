@@ -602,4 +602,102 @@ describe("/api/spots/:spot_id/comments", () => {
         });
     });
   });
+
+  describe("POST", () => {
+    test("201: Returns list of comments", () => {
+      const test = {
+        author: "test-1",
+        body: "This is a test",
+      };
+      return request(app)
+        .post("/api/spots/1/comments")
+        .send(test)
+        .expect(201)
+        .then((res) => {
+          const comment = res.body.comment;
+          expect(comment.comment_id).toEqual(expect.any(Number));
+          expect(comment.author).toEqual(test.author);
+          expect(comment.body).toEqual(test.body);
+          expect(comment.upvotes).toEqual(expect.any(Number));
+          expect(comment.downvotes).toEqual(expect.any(Number));
+          expect(comment.created_at).toEqual(expect.any(String));
+        });
+    });
+
+    test("201: Ignores irrelevent keys", () => {
+      const test = {
+        author: "test-1",
+        body: "This is a test",
+        cat: "cat",
+      };
+      return request(app)
+        .post("/api/spots/1/comments")
+        .send(test)
+        .expect(201)
+        .then((res) => {
+          const comment = res.body.comment;
+          expect(comment.comment_id).toEqual(expect.any(Number));
+          expect(comment.author).toEqual(test.author);
+          expect(comment.body).toEqual(test.body);
+          expect(comment.upvotes).toEqual(expect.any(Number));
+          expect(comment.downvotes).toEqual(expect.any(Number));
+          expect(comment.created_at).toEqual(expect.any(String));
+        });
+    });
+
+    test("400: Body Invalid by missing required key", () => {
+      const test = {
+        author: "test-1",
+      };
+      return request(app)
+        .post("/api/spots/1/comments")
+        .send(test)
+        .expect(400)
+        .then((res) => {
+          expect(res.body.msg).toBe("Body Invalid");
+        });
+    });
+
+    test("400: Body Invalid by invalid user", () => {
+      const test = {
+        author: "test-100",
+        body: "This is a test",
+      };
+      return request(app)
+        .post("/api/spots/1/comments")
+        .send(test)
+        .expect(400)
+        .then((res) => {
+          expect(res.body.msg).toBe("Body Invalid");
+        });
+    });
+
+    test("400: Spot ID Invalid", () => {
+      const test = {
+        author: "test-1",
+        body: "This is a test",
+      };
+      return request(app)
+        .post("/api/spots/cat/comments")
+        .send(test)
+        .expect(400)
+        .then((res) => {
+          expect(res.body.msg).toBe("Bad Request");
+        });
+    });
+
+    test("404: Spot ID Not Found", () => {
+      const test = {
+        author: "test-1",
+        body: "This is a test",
+      };
+      return request(app)
+        .post("/api/spots/100/comments")
+        .send(test)
+        .expect(404)
+        .then((res) => {
+          expect(res.body.msg).toBe("Spot Not Found");
+        });
+    });
+  });
 });
