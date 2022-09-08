@@ -1,5 +1,9 @@
 const comments = require("../db/data/test-data/comments");
-const { selectCommentsBySpot, insertCommentBySpot } = require("../models/comments");
+const {
+  selectCommentsBySpot,
+  insertCommentBySpot,
+  removeCommentbyId,
+} = require("../models/comments");
 const { fetchSpotBySpotId } = require("../models/spots");
 
 exports.getCommentsBySpot = (req, res, next) => {
@@ -21,6 +25,16 @@ exports.postCommentsBySpot = (req, res, next) => {
     })
     .then((comment) => {
       res.status(201).send({ comment });
+    })
+    .catch(next);
+};
+
+exports.deleteCommentById = (req, res, next) => {
+  const { comment_id } = req.params;
+
+  removeCommentbyId(comment_id)
+    .then((comment) => {
+      res.status(204).send();
     })
     .catch(next);
 };
