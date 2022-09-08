@@ -16,6 +16,8 @@ const s3 = new AWS.S3({
 });
 
 exports.fetchSpotBySpotId = async (spot_id) => {
+    await checkSpotExists(spot_id); 
+
   const result = await db.query(
     `SELECT spots.spot_id, spots.name, CONCAT(ST_X(location), ',', ST_Y(location)) AS coords, 
     spots.description, spots.opening_time, spots.closing_time, spots.time_limit, spots.upvotes, spots.downvotes, spots.parking_type, 
@@ -28,12 +30,6 @@ exports.fetchSpotBySpotId = async (spot_id) => {
     rows: [row],
   } = result;
 
-  if (!row) {
-    return Promise.reject({
-      status: 404,
-      msg: "Spot not found",
-    });
-  }
   return row;
 };
 
@@ -51,7 +47,9 @@ const checkSpotExists = (spot_id) => {
 
 exports.removeSpotBySpotId = async (spot_id) => {
      await checkSpotExists(spot_id); 
+
      const images = await db.query(`SELECT * FROM images WHERE spot_id = $1`, [spot_id])
+
      if(images.rows) {
      for (const image of images.rows) {
         const URL = image.image_url.split("/").pop()
@@ -61,8 +59,27 @@ exports.removeSpotBySpotId = async (spot_id) => {
         }).promise();
     }
   }
-     return deleteSpot = await db.query(`DELETE FROM spots WHERE spot_id = $1`, [spot_id])
-    
+
+     return deleteSpot = await db.query(`DELETE FROM spots WHERE spot_id = $1`, [spot_id])  
+
+}; 
+
+exports.updateSpotBySpotId = async (spot_id, inc_upvotes = 0, inc_downvotes = 0) => {
+    await checkSpotExists(spot_id); 
+
+    if (!inc_upvotes && !inc_downvotes) {
+        return Promise.reject({
+            status: 400, 
+            msg: "Missing required fields"
+        })
+    }; 
+
+    const incrementVotes = await db.query(`UPDATE spots 
+                                           SET upvotes = upvotes + $1, downvotes = downvotes + $2 
+                                           WHERE spot_id = $3 RETURNING *`, [inc_upvotes, inc_downvotes, spot_id]); 
+
+
+    return incrementVotes.rows[0]; 
 }
 
 exports.selectAllSpots = async (long, lat, radius, type, creator) => {
