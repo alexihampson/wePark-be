@@ -5,7 +5,7 @@ const {
   getSpotBySpotId,
   deleteSpotBySpotId,
 } = require("../controllers/spots");
-const { getCommentsBySpot } = require("../controllers/comments");
+const { getCommentsBySpot, postCommentsBySpot } = require("../controllers/comments");
 const multer = require("multer");
 
 const storage = multer.memoryStorage();
@@ -15,6 +15,6 @@ spotRouter.route("/").get(getAllSpots).post(upload.array("images"), postSpot);
 
 spotRouter.route("/:spot_id").get(getSpotBySpotId).delete(deleteSpotBySpotId);
 
-spotRouter.route("/:spot_id/comments").get(getCommentsBySpot);
+spotRouter.route("/:spot_id/comments").get(getCommentsBySpot).post(postCommentsBySpot);
 
 module.exports = spotRouter;
