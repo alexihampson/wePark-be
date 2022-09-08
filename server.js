@@ -7,6 +7,7 @@ const {
   customErrors,
   sqlForeignKeyConstraint,
   psqlErrors,
+  sqlDuplicateKey,
 } = require("./server.errors");
 const bodyParser = require("body-parser");
 
@@ -33,6 +34,8 @@ app.use(badRequest);
 app.use(badGeometry);
 
 app.use(sqlForeignKeyConstraint);
+
+app.use(sqlDuplicateKey);
 
 app.use((err, req, res, next) => {
   console.log(err);

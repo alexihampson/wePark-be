@@ -30,7 +30,7 @@ module.exports = [
     longitude: "53.48090646124613",
     latitude: "-2.236966746869063",
     time_limit: 300,
-    parking_type: "car park",
+    parking_type: "carpark",
     creator: "test-3",
   },
   {
@@ -49,7 +49,7 @@ module.exports = [
     description: "Eventually, you do plan to have dinosaurs on your dinosaur tour, right?",
     longitude: "53.43863142688142",
     latitude: "-2.1438975606391746",
-    parking_type: "car park",
+    parking_type: "carpark",
     creator: "test-1",
   },
   {
@@ -70,7 +70,7 @@ module.exports = [
     opening_time: "01:25",
     closing_time: "06:57",
     time_limit: 30,
-    parking_type: "single spot",
+    parking_type: "street",
     creator: "test-1",
   },
   {
@@ -100,7 +100,7 @@ module.exports = [
       "Remind me to thank John for a lovely weekend. Jaguar shark! So tell me - does it really exist?",
     longitude: "53.52649203006652",
     latitude: "-2.1721439077097906",
-    parking_type: "single spot",
+    parking_type: "carpark",
     creator: "test-1",
   },
   {
@@ -111,7 +111,7 @@ module.exports = [
     opening_time: "09:00",
     closing_time: "17:00",
     time_limit: 180,
-    parking_type: "car park",
+    parking_type: "carpark",
     creator: "test-1",
   },
 ];
