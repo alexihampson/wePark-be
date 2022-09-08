@@ -18,7 +18,7 @@ exports.getAllSpots = (req, res, next) => {
   const [long, lat] = (query.coords || "53.483214,-2.200469").split(",");
   const radius = parseFloat(query.radius || 10) / 50;
 
-  selectAllSpots(long, lat, radius, query.type)
+  selectAllSpots(long, lat, radius, query.type, query.creator)
     .then((spots) => {
       res.status(200).send({ spots });
     })

@@ -101,6 +101,22 @@ describe("/api/spots", () => {
         });
     });
 
+    test("200: Returns list of spots filtered by creator", () => {
+      const username = "test-1";
+      const output = data.spotData
+        .filter((spot) => spot.creator === username)
+        .map((spot) => spot.name);
+      return request(app)
+        .get(`/api/spots?creator=${username}&radius=100`)
+        .expect(200)
+        .then((res) => {
+          res.body.spots.forEach((spot, index) => {
+            expect(spot.name).toBeOneOf(output);
+          });
+          expect(res.body.spots.length).toBe(output.length);
+        });
+    });
+
     test("400: Returns error for bad radius", () => {
       return request(app)
         .get("/api/spots?radius=cat")
@@ -116,6 +132,16 @@ describe("/api/spots", () => {
         .expect(400)
         .then((res) => {
           expect(res.body.msg).toBe("Bad Geometry");
+        });
+    });
+
+    test("404: User Not Found", () => {
+      const username = "IDontExist";
+      return request(app)
+        .get(`/api/spots?creator=${username}`)
+        .expect(404)
+        .then((res) => {
+          expect(res.body.msg).toBe("User Not Found");
         });
     });
   });
