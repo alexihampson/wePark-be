@@ -44,3 +44,19 @@ exports.insertUser = async (body, avatar) => {
 
   return row;
 };
+
+exports.selectUserByName = async (username) => {
+  const {
+    rows: [row],
+  } = await db.query("SELECT * FROM users WHERE username=$1;", [username]);
+
+  if (!row) return Promise.reject({ status: 404, msg: "User Not Found" });
+
+  return row;
+};
+
+exports.selectAllUsers = async () => {
+  const { rows } = await db.query("SELECT username, avatar_url FROM users;");
+
+  return rows;
+};
