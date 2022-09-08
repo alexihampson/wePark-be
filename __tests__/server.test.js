@@ -184,7 +184,7 @@ describe("/api/spots/:spot_id", () => {
         })
         .expect(400)
         .then(({ body }) => {
-          expect(body.msg).toBe("Bad request");
+          expect(body.msg).toBe("Bad Request");
         });
     });
 
@@ -197,7 +197,7 @@ describe("/api/spots/:spot_id", () => {
         })
         .expect(404)
         .then(({ body }) => {
-          expect(body.msg).toBe("Spot not found");
+          expect(body.msg).toBe("Spot Not Found");
         });
     });
 
