@@ -25,7 +25,7 @@ describe("/api", () => {
 });
 
 describe("/api/spots/:spot_id", () => {
-    describe("GET", () => {
+  describe("GET", () => {
       test("200: Returns spot information", () => {
         return request(app)
         .get('/api/spots/1')
@@ -62,6 +62,46 @@ describe("/api/spots/:spot_id", () => {
       test('400: Returns error for bad data type in request', () => {
         return request(app)
         .get('/api/spots/doglord')
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad request"); 
+        })
+      });
+    });
+  describe("DELETE", () => {
+      test('204: Returns no content', () => {
+        const body = {
+          name: "test-delete",
+          description: "test",
+          coords: "0,0",
+          creator: "test-1",
+          parking_type: "street",
+          opening_time: "07:30",
+          closing_time: "21:00",
+          time_limit: 120,
+        };
+        return request(app)
+        .post("/api/spots")
+        .send(body)
+        .then(() => {
+        return request(app)
+        .delete('/api/spots/12')
+        .expect(204)
+        })
+      });
+      
+      test('404: Returns error for non-existent spot', () => {
+        return request(app)
+        .delete("/api/spots/1000")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Spot not found")
+        })
+      });
+
+      test('400: Returns error for bad data type in request', () => {
+        return request(app)
+        .delete('/api/spots/doglord')
         .expect(400)
         .then(({ body }) => {
           expect(body.msg).toBe("Bad request"); 

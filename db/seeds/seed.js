@@ -37,7 +37,7 @@ const seed = async ({ userData, spotData, imageData, commentData, favouritesData
 
   await db.query(`CREATE TABLE images (
         image_url VARCHAR PRIMARY KEY,
-        spot_id INT NOT NULL REFERENCES spots(spot_id)
+        spot_id INT NOT NULL REFERENCES spots(spot_id) ON DELETE CASCADE
         );`);
   await db.query(`CREATE TABLE comments (
         comment_id SERIAL PRIMARY KEY,
