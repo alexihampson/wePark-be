@@ -1,4 +1,9 @@
-const { selectAllSpots, insertSpot, fetchSpotBySpotId, removeSpotBySpotId } = require("../models/spots");
+const {
+  selectAllSpots,
+  insertSpot,
+  fetchSpotBySpotId,
+  removeSpotBySpotId,
+} = require("../models/spots");
 
 exports.getSpotBySpotId = (req, res, next) => {
   const { spot_id } = req.params;
@@ -13,14 +18,16 @@ exports.getSpotBySpotId = (req, res, next) => {
 };
 
 exports.deleteSpotBySpotId = (req, res, next) => {
-    const { spot_id } = req.params; 
-    removeSpotBySpotId(spot_id)
+  const { spot_id } = req.params;
+
+  Promise.all([removeSpotBySpotId(spot_id), fetchSpotBySpotId(spot_id)])
     .then(() => {
-        res.status(204).send(); 
-    }).catch((err) => {
-        next(err); 
+      res.status(204).send();
     })
-}
+    .catch((err) => {
+      next(err);
+    });
+};
 
 exports.getAllSpots = (req, res, next) => {
   const { query } = req;

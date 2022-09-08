@@ -31,39 +31,27 @@ exports.fetchSpotBySpotId = async (spot_id) => {
   if (!row) {
     return Promise.reject({
       status: 404,
-      msg: "Spot not found",
+      msg: "Spot Not Found",
     });
   }
   return row;
 };
 
-const checkSpotExists = (spot_id) => {
-    return db.query(`SELECT * from spots WHERE spot_id = $1`, [spot_id])
-    .then(({ rows }) => {
-        if (rows.length === 0) {
-            return Promise.reject({
-                status: 404, 
-                msg: "Spot not found"
-            })
-        }
-    })
-}
-
 exports.removeSpotBySpotId = async (spot_id) => {
-     await checkSpotExists(spot_id); 
-     const images = await db.query(`SELECT * FROM images WHERE spot_id = $1`, [spot_id])
-     if(images.rows) {
-     for (const image of images.rows) {
-        const URL = image.image_url.split("/").pop()
-     const deleteData = await s3.deleteObject({
-            Bucket: process.env.AWS_S3_BUCKET_NAME, 
-            Key: URL
-        }).promise();
+  const images = await db.query(`SELECT * FROM images WHERE spot_id = $1`, [spot_id]);
+  if (images.rows) {
+    for (const image of images.rows) {
+      const URL = image.image_url.split("/").pop();
+      const deleteData = await s3
+        .deleteObject({
+          Bucket: process.env.AWS_S3_BUCKET_NAME,
+          Key: URL,
+        })
+        .promise();
     }
   }
-     return deleteSpot = await db.query(`DELETE FROM spots WHERE spot_id = $1`, [spot_id])
-    
-}
+  return (deleteSpot = await db.query(`DELETE FROM spots WHERE spot_id = $1`, [spot_id]));
+};
 
 exports.selectAllSpots = async (long, lat, radius, type, creator) => {
   const mainSection = format(
