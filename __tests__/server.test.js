@@ -239,6 +239,20 @@ describe("/api/spots", () => {
 });
 
 describe("/api/users", () => {
+  describe("GET", () => {
+    test("200: Gets list of users", () => {
+      return request(app)
+        .get("/api/users")
+        .expect(200)
+        .then((res) => {
+          res.body.users.forEach((user) => {
+            expect(user.username).toEqual(expect.any(String));
+            expect(user.avatar_url).toEqual(expect.any(String));
+          });
+        });
+    });
+  });
+
   describe("POST", () => {
     test("201: Creates new user", () => {
       const body = {
@@ -328,6 +342,37 @@ describe("/api/users", () => {
         .expect(400)
         .then((res) => {
           expect(res.body.msg).toBe("Invalid Key");
+        });
+    });
+  });
+});
+
+describe("/api/users/:username", () => {
+  describe("GET", () => {
+    test("200: Returns expected user", () => {
+      const username = "test-1";
+      const [test] = data.userData.filter((user) => user.username === username);
+      return request(app)
+        .get(`/api/users/${username}`)
+        .expect(200)
+        .then((res) => {
+          const user = res.body.user;
+          expect(user.username).toBe(test.username);
+          expect(user.avatar_url).toBe(test.avatar_url);
+          expect(user.about).toBe(test.about);
+          expect(user.email).toBe(test.email);
+          expect(user.karma).toEqual(expect.any(Number));
+          expect(user.created_at).toEqual(expect.any(String));
+        });
+    });
+
+    test("404: User not found", () => {
+      const username = "IDontExist";
+      return request(app)
+        .get(`/api/users/${username}`)
+        .expect(404)
+        .then((res) => {
+          expect(res.body.msg).toBe("User Not Found");
         });
     });
   });
