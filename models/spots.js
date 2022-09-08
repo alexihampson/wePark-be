@@ -23,9 +23,11 @@ exports.fetchSpotBySpotId = async (spot_id) => {
     (SELECT COUNT(images.image_url) :: INT) AS image_count FROM spots LEFT JOIN images ON spots.spot_id = images.spot_id WHERE spots.spot_id = $1 GROUP BY spots.spot_id;`,
     [spot_id]
   );
+
   const {
     rows: [row],
   } = result;
+
   if (!row) {
     return Promise.reject({
       status: 404,

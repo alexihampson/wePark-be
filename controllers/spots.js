@@ -2,6 +2,7 @@ const { selectAllSpots, insertSpot, fetchSpotBySpotId } = require("../models/spo
 
 exports.getSpotBySpotId = (req, res, next) => {
   const { spot_id } = req.params;
+
   fetchSpotBySpotId(spot_id)
     .then((spot) => {
       res.status(200).send(spot);

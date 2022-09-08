@@ -10,7 +10,6 @@ afterAll(() => {
   db.end();
 });
 
-
 describe("/api", () => {
   describe("GET", () => {
     test("200: Return hello message", () => {
@@ -25,49 +24,49 @@ describe("/api", () => {
 });
 
 describe("/api/spots/:spot_id", () => {
-    describe("GET", () => {
-      test("200: Returns spot information", () => {
-        return request(app)
-        .get('/api/spots/1')
+  describe("GET", () => {
+    test("200: Returns spot information", () => {
+      return request(app)
+        .get("/api/spots/1")
         .expect(200)
         .then(({ body }) => {
-          expect(typeof body).toBe("object"); 
-          expect(body.spot_id).toEqual(expect.any(Number)); 
-          expect(body.name).toEqual(expect.any(String)); 
-          expect(body.description).toEqual(expect.any(String)); 
-          expect(body.coords).toEqual(expect.any(String)); 
-          expect(body.opening_time).toBeOneOf([expect.any(String), null]); 
-          expect(body.closing_time).toBeOneOf([expect.any(String), null]); 
-          expect(body.time_limit).toBeOneOf([expect.any(Number), null]); 
-          expect(body.parking_type).toEqual(expect.any(String)); 
-          expect(body.upvotes).toEqual(expect.any(Number)); 
-          expect(body.downvotes).toEqual(expect.any(Number)); 
-          expect(body.creator).toEqual(expect.any(String)); 
-          expect(body.created_at).toEqual(expect.any(String)); 
-          expect(body.isbusy).toEqual(expect.any(Boolean)); 
-          expect(body.lastchanged).toEqual(expect.any(String)); 
-          expect(body.images).toEqual(expect.any(String)); 
-        })
-      });
+          expect(typeof body).toBe("object");
+          expect(body.spot_id).toEqual(expect.any(Number));
+          expect(body.name).toEqual(expect.any(String));
+          expect(body.description).toEqual(expect.any(String));
+          expect(body.coords).toEqual(expect.any(String));
+          expect(body.opening_time).toBeOneOf([expect.any(String), null]);
+          expect(body.closing_time).toBeOneOf([expect.any(String), null]);
+          expect(body.time_limit).toBeOneOf([expect.any(Number), null]);
+          expect(body.parking_type).toEqual(expect.any(String));
+          expect(body.upvotes).toEqual(expect.any(Number));
+          expect(body.downvotes).toEqual(expect.any(Number));
+          expect(body.creator).toEqual(expect.any(String));
+          expect(body.created_at).toEqual(expect.any(String));
+          expect(body.isbusy).toEqual(expect.any(Boolean));
+          expect(body.lastchanged).toEqual(expect.any(String));
+          expect(body.images).toEqual(expect.any(String));
+        });
+    });
 
-      test('404: Returns error for non-existent spot', () => {
-        return request(app)
-        .get('/api/spots/1000')
+    test("404: Returns error for non-existent spot", () => {
+      return request(app)
+        .get("/api/spots/1000")
         .expect(404)
         .then(({ body }) => {
-          expect(body.msg).toBe("Spot not found")
-        })
-      });
+          expect(body.msg).toBe("Spot not found");
+        });
+    });
 
-      test('400: Returns error for bad data type in request', () => {
-        return request(app)
-        .get('/api/spots/doglord')
+    test("400: Returns error for bad data type in request", () => {
+      return request(app)
+        .get("/api/spots/doglord")
         .expect(400)
         .then(({ body }) => {
-          expect(body.msg).toBe("Bad request"); 
-        })
-      });
+          expect(body.msg).toBe("Bad request");
+        });
     });
+  });
 });
 
 describe("/api/spots", () => {
@@ -234,6 +233,101 @@ describe("/api/spots", () => {
         .expect(400)
         .then((res) => {
           expect(res.body.msg).toBe("Body Invalid");
+        });
+    });
+  });
+});
+
+describe("/api/users", () => {
+  describe("POST", () => {
+    test("201: Creates new user", () => {
+      const body = {
+        username: "test-upload-1",
+        about: "Hello I am a real human person",
+        email: "test@test.test",
+      };
+      return request(app)
+        .post("/api/users")
+        .send(body)
+        .expect(201)
+        .then((res) => {
+          const user = res.body.user;
+          expect(user.username).toBe(body.username);
+          expect(user.about).toBe(body.about);
+          expect(user.email).toBe(body.email);
+          expect(user.created_at).toEqual(expect.any(String));
+          expect(user.avatar_url).toEqual(expect.any(String));
+          expect(user.karma).toEqual(expect.any(Number));
+        });
+    });
+
+    test("201: Ignores other keys", () => {
+      const body = {
+        username: "test-upload-1",
+        about: "Hello I am a real human person",
+        email: "test@test.test",
+        cat: "cat",
+      };
+      return request(app)
+        .post("/api/users")
+        .send(body)
+        .expect(201)
+        .then((res) => {
+          const user = res.body.user;
+          expect(user.username).toBe(body.username);
+          expect(user.about).toBe(body.about);
+          expect(user.email).toBe(body.email);
+          expect(user.created_at).toEqual(expect.any(String));
+          expect(user.avatar_url).toEqual(expect.any(String));
+          expect(user.karma).toEqual(expect.any(Number));
+        });
+    });
+
+    test("201: Handles missing unneccesary keys", () => {
+      const body = {
+        username: "test-upload-1",
+      };
+      return request(app)
+        .post("/api/users")
+        .send(body)
+        .expect(201)
+        .then((res) => {
+          const user = res.body.user;
+          expect(user.username).toBe(body.username);
+          expect(user.about).toBeNull();
+          expect(user.email).toBeNull();
+          expect(user.created_at).toEqual(expect.any(String));
+          expect(user.avatar_url).toEqual(expect.any(String));
+          expect(user.karma).toEqual(expect.any(Number));
+        });
+    });
+
+    test("400: Body Invalid when missing required keys", () => {
+      const body = {
+        about: "Hello I am a real human person",
+        email: "test@test.test",
+      };
+      return request(app)
+        .post("/api/users")
+        .send(body)
+        .expect(400)
+        .then((res) => {
+          expect(res.body.msg).toBe("Body Invalid");
+        });
+    });
+
+    test("400: Username Invalid if duplicate", () => {
+      const body = {
+        username: "test-1",
+        about: "Hello I am a real human person",
+        email: "test@test.test",
+      };
+      return request(app)
+        .post("/api/users")
+        .send(body)
+        .expect(400)
+        .then((res) => {
+          expect(res.body.msg).toBe("Invalid Key");
         });
     });
   });
