@@ -37,29 +37,28 @@ exports.fetchSpotBySpotId = async (spot_id) => {
   return row;
 };
 
-exports.selectAllSpots = async (long, lat, radius, type) => {
+exports.selectAllSpots = async (long, lat, radius, type, creator) => {
   const mainSection = format(
     "SELECT spot_id, name, CONCAT(ST_X(location), ',', ST_Y(location)) AS coords, opening_time, closing_time, time_limit, parking_type, upvotes - downvotes AS votes FROM spots"
   );
 
-  let whereSection;
+  const whereList = [];
 
   if (type) {
-    whereSection = format(
-      " WHERE parking_type='%s' AND ST_DWithin(location, ST_GeometryFromText('POINT(%s %s)'), %s)",
-      type,
-      long,
-      lat,
-      radius
-    );
-  } else {
-    whereSection = format(
-      " WHERE ST_DWithin(location, ST_GeometryFromText('POINT(%s %s)'), %s)",
-      long,
-      lat,
-      radius
-    );
+    whereList.push(format("parking_type='%s'", type));
   }
+
+  if (creator) {
+    if (!(await db.query("SELECT * FROM users WHERE username=$1;", [creator])).rows[0])
+      return Promise.reject({ status: 404, msg: "User Not Found" });
+    whereList.push(format("creator='%s'", creator));
+  }
+
+  whereList.push(
+    format("ST_DWithin(location, ST_GeometryFromText('POINT(%s %s)'), %s)", long, lat, radius)
+  );
+
+  const whereSection = " WHERE " + whereList.join(" AND ");
 
   const limitSection = format(
     " ORDER BY ST_Distance(location, %s) LIMIT 20",
