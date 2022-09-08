@@ -106,6 +106,129 @@ describe("/api/spots/:spot_id", () => {
         });
     });
   });
+
+  describe("PATCH", () => {
+    test("200: Returns updated spot when upvotes incremented", () => {
+      return request(app)
+        .patch("/api/spots/1")
+        .send({
+          inc_upvotes: 1,
+          inc_downvotes: 0,
+        })
+        .expect(200)
+        .then(({ body }) => {
+          expect(typeof body).toBe("object");
+          expect(body.spot_id).toEqual(expect.any(Number));
+          expect(body.name).toEqual(expect.any(String));
+          expect(body.description).toEqual(expect.any(String));
+          expect(body.location).toEqual(expect.any(String));
+          expect(body.opening_time).toBeOneOf([expect.any(String), null]);
+          expect(body.closing_time).toBeOneOf([expect.any(String), null]);
+          expect(body.time_limit).toBeOneOf([expect.any(Number), null]);
+          expect(body.parking_type).toEqual(expect.any(String));
+          expect(body.upvotes).toEqual(1);
+          expect(body.downvotes).toEqual(0);
+          expect(body.creator).toEqual(expect.any(String));
+          expect(body.created_at).toEqual(expect.any(String));
+          expect(body.isbusy).toEqual(expect.any(Boolean));
+          expect(body.lastchanged).toEqual(expect.any(String));
+        });
+    });
+
+    test("200: Returns updated spot when downvotes incremented", () => {
+      return request(app)
+        .patch("/api/spots/1")
+        .send({
+          inc_upvotes: 0,
+          inc_downvotes: 1,
+        })
+        .expect(200)
+        .then(({ body }) => {
+          expect(typeof body).toBe("object");
+          expect(body.spot_id).toEqual(expect.any(Number));
+          expect(body.name).toEqual(expect.any(String));
+          expect(body.description).toEqual(expect.any(String));
+          expect(body.location).toEqual(expect.any(String));
+          expect(body.opening_time).toBeOneOf([expect.any(String), null]);
+          expect(body.closing_time).toBeOneOf([expect.any(String), null]);
+          expect(body.time_limit).toBeOneOf([expect.any(Number), null]);
+          expect(body.parking_type).toEqual(expect.any(String));
+          expect(body.upvotes).toEqual(0);
+          expect(body.downvotes).toEqual(1);
+          expect(body.creator).toEqual(expect.any(String));
+          expect(body.created_at).toEqual(expect.any(String));
+          expect(body.isbusy).toEqual(expect.any(Boolean));
+          expect(body.lastchanged).toEqual(expect.any(String));
+        });
+    });
+
+    test("400: Returns error if missing required fields", () => {
+      return request(app)
+        .patch("/api/spots/1")
+        .send({
+          inc_upvotes: 0,
+          inc_downvotes: 0,
+        })
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Missing required fields");
+        });
+    });
+
+    test("400: Returns error if fields are of incorrect type ", () => {
+      return request(app)
+        .patch("/api/spots/1")
+        .send({
+          inc_upvotes: "cat",
+          inc_downvotes: "dog",
+        })
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad Request");
+        });
+    });
+
+    test("404: Returns error if spot does not exist", () => {
+      return request(app)
+        .patch("/api/spots/1000")
+        .send({
+          inc_upvotes: 1,
+          inc_downvotes: 0,
+        })
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Spot Not Found");
+        });
+    });
+
+    test("200: ignores irrelevant keys", () => {
+      return request(app)
+        .patch("/api/spots/1")
+        .send({
+          inc_upvotes: 0,
+          inc_downvotes: 1,
+          fish_fingers: 6,
+        })
+        .expect(200)
+        .then(({ body }) => {
+          expect(typeof body).toBe("object");
+          expect(body.spot_id).toEqual(expect.any(Number));
+          expect(body.name).toEqual(expect.any(String));
+          expect(body.description).toEqual(expect.any(String));
+          expect(body.location).toEqual(expect.any(String));
+          expect(body.opening_time).toBeOneOf([expect.any(String), null]);
+          expect(body.closing_time).toBeOneOf([expect.any(String), null]);
+          expect(body.time_limit).toBeOneOf([expect.any(Number), null]);
+          expect(body.parking_type).toEqual(expect.any(String));
+          expect(body.upvotes).toEqual(0);
+          expect(body.downvotes).toEqual(1);
+          expect(body.creator).toEqual(expect.any(String));
+          expect(body.created_at).toEqual(expect.any(String));
+          expect(body.isbusy).toEqual(expect.any(Boolean));
+          expect(body.lastchanged).toEqual(expect.any(String));
+        });
+    });
+  });
 });
 
 describe("/api/spots", () => {
