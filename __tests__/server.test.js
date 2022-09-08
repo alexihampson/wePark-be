@@ -701,3 +701,29 @@ describe("/api/spots/:spot_id/comments", () => {
     });
   });
 });
+
+describe("/api/comments/:comment_id", () => {
+  describe("DELETE", () => {
+    test("204: Deletes comment by id", () => {
+      return request(app).delete("/api/comments/1").expect(204);
+    });
+
+    test("404: Comment Not Found", () => {
+      return request(app)
+        .delete("/api/comments/100")
+        .expect(404)
+        .then((res) => {
+          expect(res.body.msg).toBe("Comment Not Found");
+        });
+    });
+
+    test("400: Id Invalid", () => {
+      return request(app)
+        .delete("/api/comments/cat")
+        .expect(400)
+        .then((res) => {
+          expect(res.body.msg).toBe("Bad Request");
+        });
+    });
+  });
+});
