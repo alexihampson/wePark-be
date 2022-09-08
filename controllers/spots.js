@@ -2,6 +2,7 @@ const { selectAllSpots, insertSpot, fetchSpotBySpotId, removeSpotBySpotId } = re
 
 exports.getSpotBySpotId = (req, res, next) => {
   const { spot_id } = req.params;
+
   fetchSpotBySpotId(spot_id)
     .then((spot) => {
       res.status(200).send(spot);
@@ -27,7 +28,7 @@ exports.getAllSpots = (req, res, next) => {
   const [long, lat] = (query.coords || "53.483214,-2.200469").split(",");
   const radius = parseFloat(query.radius || 10) / 50;
 
-  selectAllSpots(long, lat, radius, query.type)
+  selectAllSpots(long, lat, radius, query.type, query.creator)
     .then((spots) => {
       res.status(200).send({ spots });
     })

@@ -31,7 +31,7 @@ const seed = async ({ userData, spotData, imageData, commentData, favouritesData
     parking_type VARCHAR NOT NULL,
     creator VARCHAR NOT NULL REFERENCES users(username),
     created_at TIMESTAMP DEFAULT NOW(),
-    isBusy BOOLEAN DEFAULT FALSE,
+    isbusy BOOLEAN DEFAULT FALSE,
     lastChanged TIMESTAMP DEFAULT NOW()
     );`);
 

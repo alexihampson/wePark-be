@@ -44,3 +44,11 @@ exports.sqlForeignKeyConstraint = (err, req, res, next) => {
     next(err);
   }
 };
+
+exports.sqlDuplicateKey = (err, req, res, next) => {
+  if (err.code === "23505") {
+    res.status(400).send({ msg: "Invalid Key" });
+  } else {
+    next(err);
+  }
+};
