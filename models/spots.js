@@ -117,7 +117,7 @@ exports.insertSpot = async (body, images) => {
     [
       body.name,
       body.description,
-      `POINT(${body.longitude} ${body.latitude})`,
+      `POINT(${body.latitude} ${body.longitude})`,
       body.opening_time,
       body.closing_time,
       body.time_limit,

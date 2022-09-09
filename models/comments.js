@@ -1,5 +1,6 @@
 const db = require("../db/connection");
 const format = require("pg-format");
+const { sort } = require("../db/data/test-data/comments");
 
 exports.selectCommentsBySpot = async (spot_id) => {
   const { rows } = await db.query(
@@ -62,8 +63,8 @@ exports.selectAllComments = async (author, sort_by = "age", order = "desc") => {
 
   if (author) {
     if (!(await db.query("SELECT * FROM users WHERE username=$1;", [author])).rows[0])
-      return Promise.reject({ status: 404, msg: "User Not Found" });
-    format(" WHERE author=%s", author);
+      return Promise.reject({ status: 404, msg: "Author Not Found" });
+    whereQuery = format(" WHERE author='%s'", author);
   }
 
   let sortQuery = "";
@@ -80,7 +81,6 @@ exports.selectAllComments = async (author, sort_by = "age", order = "desc") => {
       break;
     default:
       return Promise.reject({ status: 400, msg: "Bad Query" });
-      break;
   }
 
   const { rows } = await db.query(mainQuery + whereQuery + sortQuery + ";");

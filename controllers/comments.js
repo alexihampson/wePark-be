@@ -51,3 +51,11 @@ exports.patchCommentById = (req, res, next) => {
     })
     .catch(next);
 };
+
+exports.getAllComments = (req, res, next) => {
+  selectAllComments(req.query.author, req.query.sort_by, req.query.order)
+    .then((comments) => {
+      res.status(200).send({ comments });
+    })
+    .catch(next);
+};
