@@ -1040,7 +1040,7 @@ describe("/api/users/:username/favourites", () => {
         .send({ spot_id: 100 })
         .expect(404)
         .then((res) => {
-          expect(res.body.msg).toBe("ID Not Found");
+          expect(res.body.msg).toBe("Spot Not Found");
         });
     });
 

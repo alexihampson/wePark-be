@@ -35,7 +35,14 @@ exports.sqlForeignKeyConstraint = (err, req, res, next) => {
     if (err.table === "spots" || err.table === "comments") {
       res.status(400).send({ msg: "Body Invalid" });
     } else if (err.table === "favourites") {
-      res.status(404).send({ msg: "User Not Found" });
+      switch (err.constraint) {
+        case "favourites_spot_id_fkey":
+          res.status(404).send({ msg: "Spot Not Found" });
+          break;
+        default:
+          res.status(404).send({ msg: "User Not Found" });
+          break;
+      }
     } else {
       res.status(404).send({ msg: "ID Not Found" });
     }
