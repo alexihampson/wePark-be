@@ -1065,3 +1065,20 @@ describe("/api/users/:username/favourites", () => {
     });
   });
 });
+
+describe("/api/favourites/:favourite_id", () => {
+  describe("DELETE", () => {
+    test("204: Removes favourite", () => {
+      return request(app).delete("/api/favourites/1").expect(204);
+    });
+
+    test("404: Favourite ID not found", () => {
+      return request(app)
+        .delete("/api/favourites/100")
+        .expect(404)
+        .then((res) => {
+          expect(res.body.msg).toBe("ID Not Found");
+        });
+    });
+  });
+});
