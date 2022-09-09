@@ -73,7 +73,7 @@ exports.updateSpotBySpotId = async (spot_id, inc_upvotes = 0, inc_downvotes = 0)
 
 exports.selectAllSpots = async (long, lat, radius, type, creator) => {
   const mainSection = format(
-    "SELECT spot_id, name, ST_X(location) AS latitude, ST_Y(location) AS longitude, opening_time, closing_time, time_limit, parking_type, upvotes - downvotes AS votes FROM spots"
+    "SELECT spot_id, name, ST_X(location) AS latitude, ST_Y(location) AS longitude, opening_time, closing_time, time_limit, parking_type, upvotes - downvotes AS vote_count FROM spots"
   );
 
   const whereList = [];
@@ -95,7 +95,7 @@ exports.selectAllSpots = async (long, lat, radius, type, creator) => {
   const whereSection = " WHERE " + whereList.join(" AND ");
 
   const limitSection = format(
-    " ORDER BY ST_Distance(location, %s) LIMIT 20",
+    " ORDER BY ST_Distance(location, %s) LIMIT 200",
     `ST_GeometryFromText('POINT(${long} ${lat})')`
   );
 
