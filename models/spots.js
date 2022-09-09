@@ -17,7 +17,7 @@ const s3 = new AWS.S3({
 
 exports.fetchSpotBySpotId = async (spot_id) => {
   const result = await db.query(
-    `SELECT spots.spot_id, spots.name, CONCAT(ST_X(location), ',', ST_Y(location)) AS coords, 
+    `SELECT spots.spot_id, spots.name, ST_X(location) AS longitude, ST_Y(location) AS latitude, 
     spots.description, spots.opening_time, spots.closing_time, spots.time_limit, spots.upvotes, spots.downvotes, spots.parking_type, 
     spots.creator, spots.created_at, spots.isbusy, spots.lastchanged, string_agg(images.image_url, ',') AS images, 
     (SELECT COUNT(images.image_url) :: INT) AS image_count FROM spots LEFT JOIN images ON spots.spot_id = images.spot_id WHERE spots.spot_id = $1 GROUP BY spots.spot_id;`,
@@ -62,9 +62,9 @@ exports.updateSpotBySpotId = async (spot_id, inc_upvotes = 0, inc_downvotes = 0)
   }
 
   const incrementVotes = await db.query(
-    `UPDATE spots 
-                                           SET upvotes = upvotes + $1, downvotes = downvotes + $2 
-                                           WHERE spot_id = $3 RETURNING *`,
+    `UPDATE spots SET upvotes = upvotes + $1, downvotes = downvotes + $2 WHERE spot_id = $3 RETURNING spot_id, name, ST_X(location) AS longitude, ST_Y(location) AS latitude, 
+    description, opening_time, closing_time, time_limit, upvotes, downvotes, parking_type, 
+    creator, created_at, isbusy, lastchanged;`,
     [inc_upvotes, inc_downvotes, spot_id]
   );
 
@@ -73,7 +73,7 @@ exports.updateSpotBySpotId = async (spot_id, inc_upvotes = 0, inc_downvotes = 0)
 
 exports.selectAllSpots = async (long, lat, radius, type, creator) => {
   const mainSection = format(
-    "SELECT spot_id, name, CONCAT(ST_X(location), ',', ST_Y(location)) AS coords, opening_time, closing_time, time_limit, parking_type, upvotes - downvotes AS votes FROM spots"
+    "SELECT spot_id, name, ST_X(location) AS longitude, ST_Y(location) AS latitude, opening_time, closing_time, time_limit, parking_type, upvotes - downvotes AS votes FROM spots"
   );
 
   const whereList = [];
@@ -107,17 +107,17 @@ exports.selectAllSpots = async (long, lat, radius, type, creator) => {
 exports.insertSpot = async (body, images) => {
   if (!images) images = [];
 
-  if (!body.coords || !body.name || !body.creator || !body.parking_type)
+  if (!body.longitude || !body.latitude || !body.name || !body.creator || !body.parking_type)
     return Promise.reject({ status: 400, msg: "Body Invalid" });
 
-  const [long, lat] = body.coords.split(",");
-
   const insertQuery = format(
-    "INSERT INTO spots (name, description, location, opening_time, closing_time, time_limit, parking_type, creator) VALUES (%L) RETURNING *;",
+    `INSERT INTO spots (name, description, location, opening_time, closing_time, time_limit, parking_type, creator) VALUES (%L) RETURNING spot_id, name, ST_X(location) AS longitude, ST_Y(location) AS latitude, 
+    description, opening_time, closing_time, time_limit, upvotes, downvotes, parking_type, 
+    creator, created_at, isbusy, lastchanged;`,
     [
       body.name,
       body.description,
-      `POINT(${long} ${lat})`,
+      `POINT(${body.longitude} ${body.latitude})`,
       body.opening_time,
       body.closing_time,
       body.time_limit,

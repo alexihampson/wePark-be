@@ -34,7 +34,8 @@ describe("/api/spots/:spot_id", () => {
           expect(body.spot_id).toEqual(expect.any(Number));
           expect(body.name).toEqual(expect.any(String));
           expect(body.description).toEqual(expect.any(String));
-          expect(body.coords).toEqual(expect.any(String));
+          expect(body.longitude).toEqual(expect.any(Number));
+          expect(body.latitude).toEqual(expect.any(Number));
           expect(body.opening_time).toBeOneOf([expect.any(String), null]);
           expect(body.closing_time).toBeOneOf([expect.any(String), null]);
           expect(body.time_limit).toBeOneOf([expect.any(Number), null]);
@@ -73,7 +74,8 @@ describe("/api/spots/:spot_id", () => {
       const body = {
         name: "test-delete",
         description: "test",
-        coords: "0,0",
+        longitude: "0",
+        latitude: "0",
         creator: "test-1",
         parking_type: "street",
         opening_time: "07:30",
@@ -121,7 +123,8 @@ describe("/api/spots/:spot_id", () => {
           expect(body.spot_id).toEqual(expect.any(Number));
           expect(body.name).toEqual(expect.any(String));
           expect(body.description).toEqual(expect.any(String));
-          expect(body.location).toEqual(expect.any(String));
+          expect(body.longitude).toEqual(expect.any(Number));
+          expect(body.latitude).toEqual(expect.any(Number));
           expect(body.opening_time).toBeOneOf([expect.any(String), null]);
           expect(body.closing_time).toBeOneOf([expect.any(String), null]);
           expect(body.time_limit).toBeOneOf([expect.any(Number), null]);
@@ -148,7 +151,8 @@ describe("/api/spots/:spot_id", () => {
           expect(body.spot_id).toEqual(expect.any(Number));
           expect(body.name).toEqual(expect.any(String));
           expect(body.description).toEqual(expect.any(String));
-          expect(body.location).toEqual(expect.any(String));
+          expect(body.longitude).toEqual(expect.any(Number));
+          expect(body.latitude).toEqual(expect.any(Number));
           expect(body.opening_time).toBeOneOf([expect.any(String), null]);
           expect(body.closing_time).toBeOneOf([expect.any(String), null]);
           expect(body.time_limit).toBeOneOf([expect.any(Number), null]);
@@ -215,7 +219,8 @@ describe("/api/spots/:spot_id", () => {
           expect(body.spot_id).toEqual(expect.any(Number));
           expect(body.name).toEqual(expect.any(String));
           expect(body.description).toEqual(expect.any(String));
-          expect(body.location).toEqual(expect.any(String));
+          expect(body.longitude).toEqual(expect.any(Number));
+          expect(body.latitude).toEqual(expect.any(Number));
           expect(body.opening_time).toBeOneOf([expect.any(String), null]);
           expect(body.closing_time).toBeOneOf([expect.any(String), null]);
           expect(body.time_limit).toBeOneOf([expect.any(Number), null]);
@@ -242,7 +247,8 @@ describe("/api/spots", () => {
           res.body.spots.forEach((spot) => {
             expect(spot.spot_id).toEqual(expect.any(Number));
             expect(spot.name).toEqual(expect.any(String));
-            expect(spot.coords).toEqual(expect.any(String));
+            expect(spot.longitude).toEqual(expect.any(Number));
+            expect(spot.latitude).toEqual(expect.any(Number));
             expect(spot.opening_time).toBeOneOf([expect.any(String), null]);
             expect(spot.closing_time).toBeOneOf([expect.any(String), null]);
             expect(spot.time_limit).toBeOneOf([expect.any(Number), null]);
@@ -313,7 +319,8 @@ describe("/api/spots", () => {
       const body = {
         name: "test",
         description: "test",
-        coords: "0,0",
+        longitude: "0",
+        latitude: "0",
         creator: "test-1",
         parking_type: "street",
         opening_time: "07:30",
@@ -328,7 +335,8 @@ describe("/api/spots", () => {
           let spot = res.body.spot;
           expect(spot.spot_id).toEqual(expect.any(Number));
           expect(spot.name).toEqual(expect.any(String));
-          expect(spot.coords).toEqual(expect.any(String));
+          expect(spot.longitude).toEqual(expect.any(Number));
+          expect(spot.latitude).toEqual(expect.any(Number));
           expect(spot.opening_time).toBeOneOf([expect.any(String), null]);
           expect(spot.closing_time).toBeOneOf([expect.any(String), null]);
           expect(spot.time_limit).toBeOneOf([expect.any(Number), null]);
@@ -347,7 +355,8 @@ describe("/api/spots", () => {
       const body = {
         name: "test",
         description: "test",
-        coords: "0,0",
+        longitude: "0",
+        latitude: "0",
         creator: "test-1",
         parking_type: "street",
         cats: "cats",
@@ -360,7 +369,8 @@ describe("/api/spots", () => {
           let spot = res.body.spot;
           expect(spot.spot_id).toEqual(expect.any(Number));
           expect(spot.name).toEqual(expect.any(String));
-          expect(spot.coords).toEqual(expect.any(String));
+          expect(spot.longitude).toEqual(expect.any(Number));
+          expect(spot.latitude).toEqual(expect.any(Number));
           expect(spot.opening_time).toBeOneOf([expect.any(String), null]);
           expect(spot.closing_time).toBeOneOf([expect.any(String), null]);
           expect(spot.time_limit).toBeOneOf([expect.any(Number), null]);
@@ -379,7 +389,8 @@ describe("/api/spots", () => {
       const body = {
         name: "test",
         description: "test",
-        coords: "0,0",
+        longitude: "0",
+        latitude: "0",
       };
       return request(app)
         .post("/api/spots")
@@ -394,7 +405,8 @@ describe("/api/spots", () => {
       const body = {
         name: "test",
         description: "test",
-        coords: "cat",
+        longitude: "cat",
+        latitude: "cat",
         creator: "test-1",
         parking_type: "street",
       };
@@ -411,7 +423,8 @@ describe("/api/spots", () => {
       const body = {
         name: "test",
         description: "test",
-        coords: "0,0",
+        longitude: "0",
+        latitude: "0",
         creator: "test-100",
         parking_type: "street",
       };
