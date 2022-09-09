@@ -1,6 +1,5 @@
 const db = require("../db/connection");
 const format = require("pg-format");
-const { sort } = require("../db/data/test-data/comments");
 
 exports.selectCommentsBySpot = async (spot_id) => {
   const { rows } = await db.query(
