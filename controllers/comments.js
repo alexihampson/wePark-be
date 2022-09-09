@@ -4,6 +4,7 @@ const {
   insertCommentBySpot,
   removeCommentById,
   updateCommentById,
+  selectAllComments,
 } = require("../models/comments");
 const { fetchSpotBySpotId } = require("../models/spots");
 
