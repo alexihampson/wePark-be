@@ -1,4 +1,4 @@
-const { selectAllFavourites } = require("../models/favourites");
+const { selectAllFavourites, insertFavourite } = require("../models/favourites");
 const { selectUserByName } = require("../models/users");
 
 exports.getAllFavourites = (req, res, next) => {
@@ -11,3 +11,5 @@ exports.getAllFavourites = (req, res, next) => {
     })
     .catch(next);
 };
+
+exports.postFavourite = (req, res, next) => {};
