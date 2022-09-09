@@ -385,6 +385,41 @@ describe("/api/spots", () => {
         });
     });
 
+    test("201: Ignores empty string times", () => {
+      const body = {
+        name: "test",
+        description: "test",
+        longitude: "0",
+        latitude: "0",
+        creator: "test-1",
+        parking_type: "street",
+        opening_time: "",
+        closing_time: "12:00",
+      };
+      return request(app)
+        .post("/api/spots")
+        .send(body)
+        .expect(201)
+        .then((res) => {
+          let spot = res.body.spot;
+          expect(spot.spot_id).toEqual(expect.any(Number));
+          expect(spot.name).toEqual(expect.any(String));
+          expect(spot.longitude).toEqual(expect.any(Number));
+          expect(spot.latitude).toEqual(expect.any(Number));
+          expect(spot.opening_time).toBeOneOf([expect.any(String), null]);
+          expect(spot.closing_time).toBeOneOf([expect.any(String), null]);
+          expect(spot.time_limit).toBeOneOf([expect.any(Number), null]);
+          expect(spot.parking_type).toEqual(expect.any(String));
+          expect(spot.upvotes).toEqual(expect.any(Number));
+          expect(spot.downvotes).toEqual(expect.any(Number));
+          expect(spot.creator).toEqual(expect.any(String));
+          expect(spot.created_at).toEqual(expect.any(String));
+          expect(spot.isbusy).toEqual(expect.any(Boolean));
+          expect(spot.lastchanged).toEqual(expect.any(String));
+          expect(spot.images).toEqual(expect.any(String));
+        });
+    });
+
     test("400: Invalid body from missing keys", () => {
       const body = {
         name: "test",

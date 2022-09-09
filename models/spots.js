@@ -110,6 +110,11 @@ exports.insertSpot = async (body, images) => {
   if (!body.longitude || !body.latitude || !body.name || !body.creator || !body.parking_type)
     return Promise.reject({ status: 400, msg: "Body Invalid" });
 
+  const regex = /\d\d\:\d\d(:\d\d)?/gi;
+
+  body.opening_time = regex.test(body.opening_time) ? body.opening_time : null;
+  body.closing_time = regex.test(body.closing_time) ? body.closing_time : null;
+
   const insertQuery = format(
     `INSERT INTO spots (name, description, location, opening_time, closing_time, time_limit, parking_type, creator) VALUES (%L) RETURNING spot_id, name, ST_X(location) AS latitude, ST_Y(location) AS longitude, 
     description, opening_time, closing_time, time_limit, upvotes, downvotes, parking_type, 
