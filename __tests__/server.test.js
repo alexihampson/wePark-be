@@ -739,4 +739,106 @@ describe("/api/comments/:comment_id", () => {
         });
     });
   });
+
+  describe("PATCH", () => {
+    test("200: Returns updated comment", () => {
+      const test = {
+        inc_upvotes: 5,
+        inc_downvotes: 12,
+      };
+      return request(app)
+        .patch("/api/comments/1")
+        .send(test)
+        .expect(200)
+        .then((res) => {
+          expect(res.body.comment.upvotes).toBe(5);
+          expect(res.body.comment.downvotes).toBe(12);
+        });
+    });
+
+    test("200: Accepts only upvotes", () => {
+      const test = {
+        inc_upvotes: 5,
+      };
+      return request(app)
+        .patch("/api/comments/1")
+        .send(test)
+        .expect(200)
+        .then((res) => {
+          expect(res.body.comment.upvotes).toBe(5);
+          expect(res.body.comment.downvotes).toBe(0);
+        });
+    });
+
+    test("200: Accepts only downvotes", () => {
+      const test = {
+        inc_downvotes: 12,
+      };
+      return request(app)
+        .patch("/api/comments/1")
+        .send(test)
+        .expect(200)
+        .then((res) => {
+          expect(res.body.comment.upvotes).toBe(0);
+          expect(res.body.comment.downvotes).toBe(12);
+        });
+    });
+
+    test("200: Ignores irrelevent keys", () => {
+      const test = {
+        inc_upvotes: 5,
+        inc_downvotes: 12,
+        cat: "cat",
+      };
+      return request(app)
+        .patch("/api/comments/1")
+        .send(test)
+        .expect(200)
+        .then((res) => {
+          expect(res.body.comment.upvotes).toBe(5);
+          expect(res.body.comment.downvotes).toBe(12);
+        });
+    });
+
+    test("404: Comment Id Not Found", () => {
+      const test = {
+        inc_upvotes: 5,
+        inc_downvotes: 12,
+      };
+      return request(app)
+        .patch("/api/comments/100")
+        .send(test)
+        .expect(404)
+        .then((res) => {
+          expect(res.body.msg).toBe("Comment Not Found");
+        });
+    });
+
+    test("400: Id Invalid", () => {
+      const test = {
+        inc_upvotes: 5,
+        inc_downvotes: 12,
+      };
+      return request(app)
+        .patch("/api/comments/cat")
+        .send(test)
+        .expect(400)
+        .then((res) => {
+          expect(res.body.msg).toBe("Bad Request");
+        });
+    });
+
+    test("400: Body Invalid", () => {
+      const test = {
+        cat: "cat",
+      };
+      return request(app)
+        .patch("/api/comments/1")
+        .send(test)
+        .expect(400)
+        .then((res) => {
+          expect(res.body.msg).toBe("Body Invalid");
+        });
+    });
+  });
 });
