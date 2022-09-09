@@ -940,3 +940,36 @@ describe("/api/comments", () => {
     });
   });
 });
+
+describe("/api/users/:username/favourites", () => {
+  describe("GET", () => {
+    test("200: Returns list of spots", () => {
+      return request(app)
+        .get("/api/users/test-1/favourites")
+        .expect(200)
+        .then((res) => {
+          expect(res.body.spots.length).toBeLessThanOrEqual(20);
+          res.body.spots.forEach((spot) => {
+            expect(spot.spot_id).toEqual(expect.any(Number));
+            expect(spot.name).toEqual(expect.any(String));
+            expect(spot.longitude).toEqual(expect.any(Number));
+            expect(spot.latitude).toEqual(expect.any(Number));
+            expect(spot.opening_time).toBeOneOf([expect.any(String), null]);
+            expect(spot.closing_time).toBeOneOf([expect.any(String), null]);
+            expect(spot.time_limit).toBeOneOf([expect.any(Number), null]);
+            expect(spot.parking_type).toEqual(expect.any(String));
+            expect(spot.vote_count).toEqual(expect.any(Number));
+          });
+        });
+    });
+
+    test("404: User not Found", () => {
+      return request(app)
+        .get("/api/users/cat/favourites")
+        .expect(404)
+        .then((res) => {
+          expect(res.body.msg).toBe("User Not Found");
+        });
+    });
+  });
+});
