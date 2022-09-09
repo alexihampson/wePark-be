@@ -30,3 +30,16 @@ exports.selectAllFavourites = async (username, sort_by = "popularity", order = "
 
   return rows;
 };
+
+exports.insertFavourite = async (username, spot_id) => {
+  if (!spot_id) return Promise.reject({ status: 400, msg: "Body Invalid" });
+
+  const {
+    rows: [row],
+  } = await db.query("INSERT INTO favourites (spot_id, username) VALUES ($1,$2) RETURNING *;", [
+    spot_id,
+    username,
+  ]);
+
+  return row;
+};

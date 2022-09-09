@@ -29,24 +29,24 @@ describe("/api/spots/:spot_id", () => {
       return request(app)
         .get("/api/spots/1")
         .expect(200)
-        .then(({ body }) => {
-          expect(typeof body).toBe("object");
-          expect(body.spot_id).toEqual(expect.any(Number));
-          expect(body.name).toEqual(expect.any(String));
-          expect(body.description).toEqual(expect.any(String));
-          expect(body.longitude).toEqual(expect.any(Number));
-          expect(body.latitude).toEqual(expect.any(Number));
-          expect(body.opening_time).toBeOneOf([expect.any(String), null]);
-          expect(body.closing_time).toBeOneOf([expect.any(String), null]);
-          expect(body.time_limit).toBeOneOf([expect.any(Number), null]);
-          expect(body.parking_type).toEqual(expect.any(String));
-          expect(body.upvotes).toEqual(expect.any(Number));
-          expect(body.downvotes).toEqual(expect.any(Number));
-          expect(body.creator).toEqual(expect.any(String));
-          expect(body.created_at).toEqual(expect.any(String));
-          expect(body.isbusy).toEqual(expect.any(Boolean));
-          expect(body.lastchanged).toEqual(expect.any(String));
-          expect(body.images).toEqual(expect.any(String));
+        .then(({ body: { spot } }) => {
+          expect(typeof spot).toBe("object");
+          expect(spot.spot_id).toEqual(expect.any(Number));
+          expect(spot.name).toEqual(expect.any(String));
+          expect(spot.description).toEqual(expect.any(String));
+          expect(spot.longitude).toEqual(expect.any(Number));
+          expect(spot.latitude).toEqual(expect.any(Number));
+          expect(spot.opening_time).toBeOneOf([expect.any(String), null]);
+          expect(spot.closing_time).toBeOneOf([expect.any(String), null]);
+          expect(spot.time_limit).toBeOneOf([expect.any(Number), null]);
+          expect(spot.parking_type).toEqual(expect.any(String));
+          expect(spot.upvotes).toEqual(expect.any(Number));
+          expect(spot.downvotes).toEqual(expect.any(Number));
+          expect(spot.creator).toEqual(expect.any(String));
+          expect(spot.created_at).toEqual(expect.any(String));
+          expect(spot.isbusy).toEqual(expect.any(Boolean));
+          expect(spot.lastchanged).toEqual(expect.any(String));
+          expect(spot.images).toEqual(expect.any(String));
         });
     });
 
@@ -118,23 +118,23 @@ describe("/api/spots/:spot_id", () => {
           inc_downvotes: 0,
         })
         .expect(200)
-        .then(({ body }) => {
-          expect(typeof body).toBe("object");
-          expect(body.spot_id).toEqual(expect.any(Number));
-          expect(body.name).toEqual(expect.any(String));
-          expect(body.description).toEqual(expect.any(String));
-          expect(body.longitude).toEqual(expect.any(Number));
-          expect(body.latitude).toEqual(expect.any(Number));
-          expect(body.opening_time).toBeOneOf([expect.any(String), null]);
-          expect(body.closing_time).toBeOneOf([expect.any(String), null]);
-          expect(body.time_limit).toBeOneOf([expect.any(Number), null]);
-          expect(body.parking_type).toEqual(expect.any(String));
-          expect(body.upvotes).toEqual(1);
-          expect(body.downvotes).toEqual(0);
-          expect(body.creator).toEqual(expect.any(String));
-          expect(body.created_at).toEqual(expect.any(String));
-          expect(body.isbusy).toEqual(expect.any(Boolean));
-          expect(body.lastchanged).toEqual(expect.any(String));
+        .then(({ body: { spot } }) => {
+          expect(typeof spot).toBe("object");
+          expect(spot.spot_id).toEqual(expect.any(Number));
+          expect(spot.name).toEqual(expect.any(String));
+          expect(spot.description).toEqual(expect.any(String));
+          expect(spot.longitude).toEqual(expect.any(Number));
+          expect(spot.latitude).toEqual(expect.any(Number));
+          expect(spot.opening_time).toBeOneOf([expect.any(String), null]);
+          expect(spot.closing_time).toBeOneOf([expect.any(String), null]);
+          expect(spot.time_limit).toBeOneOf([expect.any(Number), null]);
+          expect(spot.parking_type).toEqual(expect.any(String));
+          expect(spot.upvotes).toEqual(1);
+          expect(spot.downvotes).toEqual(0);
+          expect(spot.creator).toEqual(expect.any(String));
+          expect(spot.created_at).toEqual(expect.any(String));
+          expect(spot.isbusy).toEqual(expect.any(Boolean));
+          expect(spot.lastchanged).toEqual(expect.any(String));
         });
     });
 
@@ -146,23 +146,23 @@ describe("/api/spots/:spot_id", () => {
           inc_downvotes: 1,
         })
         .expect(200)
-        .then(({ body }) => {
-          expect(typeof body).toBe("object");
-          expect(body.spot_id).toEqual(expect.any(Number));
-          expect(body.name).toEqual(expect.any(String));
-          expect(body.description).toEqual(expect.any(String));
-          expect(body.longitude).toEqual(expect.any(Number));
-          expect(body.latitude).toEqual(expect.any(Number));
-          expect(body.opening_time).toBeOneOf([expect.any(String), null]);
-          expect(body.closing_time).toBeOneOf([expect.any(String), null]);
-          expect(body.time_limit).toBeOneOf([expect.any(Number), null]);
-          expect(body.parking_type).toEqual(expect.any(String));
-          expect(body.upvotes).toEqual(0);
-          expect(body.downvotes).toEqual(1);
-          expect(body.creator).toEqual(expect.any(String));
-          expect(body.created_at).toEqual(expect.any(String));
-          expect(body.isbusy).toEqual(expect.any(Boolean));
-          expect(body.lastchanged).toEqual(expect.any(String));
+        .then(({ body: { spot } }) => {
+          expect(typeof spot).toBe("object");
+          expect(spot.spot_id).toEqual(expect.any(Number));
+          expect(spot.name).toEqual(expect.any(String));
+          expect(spot.description).toEqual(expect.any(String));
+          expect(spot.longitude).toEqual(expect.any(Number));
+          expect(spot.latitude).toEqual(expect.any(Number));
+          expect(spot.opening_time).toBeOneOf([expect.any(String), null]);
+          expect(spot.closing_time).toBeOneOf([expect.any(String), null]);
+          expect(spot.time_limit).toBeOneOf([expect.any(Number), null]);
+          expect(spot.parking_type).toEqual(expect.any(String));
+          expect(spot.upvotes).toEqual(0);
+          expect(spot.downvotes).toEqual(1);
+          expect(spot.creator).toEqual(expect.any(String));
+          expect(spot.created_at).toEqual(expect.any(String));
+          expect(spot.isbusy).toEqual(expect.any(Boolean));
+          expect(spot.lastchanged).toEqual(expect.any(String));
         });
     });
 
@@ -214,23 +214,23 @@ describe("/api/spots/:spot_id", () => {
           fish_fingers: 6,
         })
         .expect(200)
-        .then(({ body }) => {
-          expect(typeof body).toBe("object");
-          expect(body.spot_id).toEqual(expect.any(Number));
-          expect(body.name).toEqual(expect.any(String));
-          expect(body.description).toEqual(expect.any(String));
-          expect(body.longitude).toEqual(expect.any(Number));
-          expect(body.latitude).toEqual(expect.any(Number));
-          expect(body.opening_time).toBeOneOf([expect.any(String), null]);
-          expect(body.closing_time).toBeOneOf([expect.any(String), null]);
-          expect(body.time_limit).toBeOneOf([expect.any(Number), null]);
-          expect(body.parking_type).toEqual(expect.any(String));
-          expect(body.upvotes).toEqual(0);
-          expect(body.downvotes).toEqual(1);
-          expect(body.creator).toEqual(expect.any(String));
-          expect(body.created_at).toEqual(expect.any(String));
-          expect(body.isbusy).toEqual(expect.any(Boolean));
-          expect(body.lastchanged).toEqual(expect.any(String));
+        .then(({ body: { spot } }) => {
+          expect(typeof spot).toBe("object");
+          expect(spot.spot_id).toEqual(expect.any(Number));
+          expect(spot.name).toEqual(expect.any(String));
+          expect(spot.description).toEqual(expect.any(String));
+          expect(spot.longitude).toEqual(expect.any(Number));
+          expect(spot.latitude).toEqual(expect.any(Number));
+          expect(spot.opening_time).toBeOneOf([expect.any(String), null]);
+          expect(spot.closing_time).toBeOneOf([expect.any(String), null]);
+          expect(spot.time_limit).toBeOneOf([expect.any(Number), null]);
+          expect(spot.parking_type).toEqual(expect.any(String));
+          expect(spot.upvotes).toEqual(0);
+          expect(spot.downvotes).toEqual(1);
+          expect(spot.creator).toEqual(expect.any(String));
+          expect(spot.created_at).toEqual(expect.any(String));
+          expect(spot.isbusy).toEqual(expect.any(Boolean));
+          expect(spot.lastchanged).toEqual(expect.any(String));
         });
     });
   });
@@ -969,6 +969,98 @@ describe("/api/users/:username/favourites", () => {
         .expect(404)
         .then((res) => {
           expect(res.body.msg).toBe("User Not Found");
+        });
+    });
+  });
+
+  describe("POST", () => {
+    test("201: Returns new favourite spot", () => {
+      return request(app)
+        .post("/api/users/test-1/favourites")
+        .send({ spot_id: 9 })
+        .expect(201)
+        .then(({ body: { spot } }) => {
+          expect(typeof spot).toBe("object");
+          expect(spot.spot_id).toEqual(expect.any(Number));
+          expect(spot.name).toEqual(expect.any(String));
+          expect(spot.description).toEqual(expect.any(String));
+          expect(spot.longitude).toEqual(expect.any(Number));
+          expect(spot.latitude).toEqual(expect.any(Number));
+          expect(spot.opening_time).toBeOneOf([expect.any(String), null]);
+          expect(spot.closing_time).toBeOneOf([expect.any(String), null]);
+          expect(spot.time_limit).toBeOneOf([expect.any(Number), null]);
+          expect(spot.parking_type).toEqual(expect.any(String));
+          expect(spot.upvotes).toEqual(expect.any(Number));
+          expect(spot.downvotes).toEqual(expect.any(Number));
+          expect(spot.creator).toEqual(expect.any(String));
+          expect(spot.created_at).toEqual(expect.any(String));
+          expect(spot.isbusy).toEqual(expect.any(Boolean));
+          expect(spot.lastchanged).toEqual(expect.any(String));
+        });
+    });
+
+    test("201: Ignores Irrelevent Keys", () => {
+      return request(app)
+        .post("/api/users/test-1/favourites")
+        .send({ spot_id: 9, cats: "cats" })
+        .expect(201)
+        .then(({ body: { spot } }) => {
+          expect(typeof spot).toBe("object");
+          expect(spot.spot_id).toEqual(expect.any(Number));
+          expect(spot.name).toEqual(expect.any(String));
+          expect(spot.description).toEqual(expect.any(String));
+          expect(spot.longitude).toEqual(expect.any(Number));
+          expect(spot.latitude).toEqual(expect.any(Number));
+          expect(spot.opening_time).toBeOneOf([expect.any(String), null]);
+          expect(spot.closing_time).toBeOneOf([expect.any(String), null]);
+          expect(spot.time_limit).toBeOneOf([expect.any(Number), null]);
+          expect(spot.parking_type).toEqual(expect.any(String));
+          expect(spot.upvotes).toEqual(expect.any(Number));
+          expect(spot.downvotes).toEqual(expect.any(Number));
+          expect(spot.creator).toEqual(expect.any(String));
+          expect(spot.created_at).toEqual(expect.any(String));
+          expect(spot.isbusy).toEqual(expect.any(Boolean));
+          expect(spot.lastchanged).toEqual(expect.any(String));
+        });
+    });
+
+    test("404: User Not Found", () => {
+      return request(app)
+        .post("/api/users/test-100/favourites")
+        .send({ spot_id: 9 })
+        .expect(404)
+        .then((res) => {
+          expect(res.body.msg).toBe("User Not Found");
+        });
+    });
+
+    test("404: Spot Not Found", () => {
+      return request(app)
+        .post("/api/users/test-1/favourites")
+        .send({ spot_id: 100 })
+        .expect(404)
+        .then((res) => {
+          expect(res.body.msg).toBe("ID Not Found");
+        });
+    });
+
+    test("400: Spot Invalid Type", () => {
+      return request(app)
+        .post("/api/users/test-100/favourites")
+        .send({ spot_id: "cat" })
+        .expect(400)
+        .then((res) => {
+          expect(res.body.msg).toBe("Bad Request");
+        });
+    });
+
+    test("400: Body Missing Key", () => {
+      return request(app)
+        .post("/api/users/test-100/favourites")
+        .send({ cat: "cat" })
+        .expect(400)
+        .then((res) => {
+          expect(res.body.msg).toBe("Body Invalid");
         });
     });
   });
