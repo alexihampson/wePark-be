@@ -1,5 +1,6 @@
 const db = require("../db/connection");
 const format = require("pg-format");
+const { sort } = require("../db/data/test-data/comments");
 
 exports.selectCommentsBySpot = async (spot_id) => {
   const { rows } = await db.query(
@@ -48,4 +49,41 @@ exports.updateCommentById = async (comment_id, inc_upvotes = 0, inc_downvotes = 
   if (!row) return Promise.reject({ status: 404, msg: "Comment Not Found" });
 
   return row;
+};
+
+exports.selectAllComments = async (author, sort_by = "age", order = "desc") => {
+  if (order.toLowerCase() !== "desc" && order.toLowerCase() !== "asc")
+    return Promise.reject({ status: 400, msg: "Bad Query" });
+
+  const mainQuery = format(
+    "SELECT body, created_at, author, spot_id, comment_id, upvotes - downvotes AS vote_count FROM comments"
+  );
+
+  let whereQuery = "";
+
+  if (author) {
+    if (!(await db.query("SELECT * FROM users WHERE username=$1;", [author])).rows[0])
+      return Promise.reject({ status: 404, msg: "Author Not Found" });
+    whereQuery = format(" WHERE author='%s'", author);
+  }
+
+  let sortQuery = "";
+
+  switch (sort_by) {
+    case "age":
+      sortQuery = format(" ORDER BY created_at %s", order);
+      break;
+    case "popularity":
+      sortQuery = format(" ORDER BY upvotes-downvotes %s", order);
+      break;
+    case "controversial":
+      sortQuery = format(" ORDER BY upvotes - downvotes ASC, upvotes + downvotes DESC");
+      break;
+    default:
+      return Promise.reject({ status: 400, msg: "Bad Query" });
+  }
+
+  const { rows } = await db.query(mainQuery + whereQuery + sortQuery + ";");
+
+  return rows;
 };

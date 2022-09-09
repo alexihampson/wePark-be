@@ -877,3 +877,66 @@ describe("/api/comments/:comment_id", () => {
     });
   });
 });
+
+describe("/api/comments", () => {
+  describe("GET", () => {
+    test("200: Returns list of comments", () => {
+      return request(app)
+        .get("/api/comments")
+        .expect(200)
+        .then((res) => {
+          res.body.comments.forEach((comment) => {
+            expect(comment.body).toEqual(expect.any(String));
+            expect(comment.author).toEqual(expect.any(String));
+            expect(comment.created_at).toEqual(expect.any(String));
+            expect(comment.comment_id).toEqual(expect.any(Number));
+            expect(comment.spot_id).toEqual(expect.any(Number));
+            expect(comment.vote_count).toEqual(expect.any(Number));
+          });
+        });
+    });
+
+    test("200: Filters By author", () => {
+      return request(app)
+        .get("/api/comments?author=test-1")
+        .expect(200)
+        .then((res) => {
+          res.body.comments.forEach((comment) => {
+            expect(comment.body).toEqual(expect.any(String));
+            expect(comment.author).toEqual("test-1");
+            expect(comment.created_at).toEqual(expect.any(String));
+            expect(comment.comment_id).toEqual(expect.any(Number));
+            expect(comment.spot_id).toEqual(expect.any(Number));
+            expect(comment.vote_count).toEqual(expect.any(Number));
+          });
+        });
+    });
+
+    test("404: Author Not Found", () => {
+      return request(app)
+        .get("/api/comments?author=test-100")
+        .expect(404)
+        .then((res) => {
+          expect(res.body.msg).toBe("Author Not Found");
+        });
+    });
+
+    test("400: Order invalid", () => {
+      return request(app)
+        .get("/api/comments?order=cat")
+        .expect(400)
+        .then((res) => {
+          expect(res.body.msg).toBe("Bad Query");
+        });
+    });
+
+    test("400: sort_by invalid", () => {
+      return request(app)
+        .get("/api/comments?sort_by=cat")
+        .expect(400)
+        .then((res) => {
+          expect(res.body.msg).toBe("Bad Query");
+        });
+    });
+  });
+});

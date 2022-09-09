@@ -4,6 +4,7 @@ const {
   insertCommentBySpot,
   removeCommentById,
   updateCommentById,
+  selectAllComments,
 } = require("../models/comments");
 const { fetchSpotBySpotId } = require("../models/spots");
 
@@ -47,6 +48,14 @@ exports.patchCommentById = (req, res, next) => {
   updateCommentById(comment_id, inc_upvotes, inc_downvotes)
     .then((comment) => {
       res.status(200).send({ comment });
+    })
+    .catch(next);
+};
+
+exports.getAllComments = (req, res, next) => {
+  selectAllComments(req.query.author, req.query.sort_by, req.query.order)
+    .then((comments) => {
+      res.status(200).send({ comments });
     })
     .catch(next);
 };
