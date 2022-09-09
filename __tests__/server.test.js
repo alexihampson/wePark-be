@@ -253,7 +253,7 @@ describe("/api/spots", () => {
             expect(spot.closing_time).toBeOneOf([expect.any(String), null]);
             expect(spot.time_limit).toBeOneOf([expect.any(Number), null]);
             expect(spot.parking_type).toEqual(expect.any(String));
-            expect(spot.votes).toEqual(expect.any(Number));
+            expect(spot.vote_count).toEqual(expect.any(Number));
           });
         });
     });
