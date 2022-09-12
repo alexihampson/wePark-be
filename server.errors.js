@@ -8,6 +8,7 @@ exports.customErrors = (err, req, res, next) => {
 
 exports.psqlErrors = (err, req, res, next) => {
   if (err.code === "22P02") {
+    console.log(err);
     res.status(400).send({ msg: "Bad Request" });
   } else {
     next(err);
@@ -33,6 +34,7 @@ exports.badGeometry = (err, req, res, next) => {
 exports.sqlForeignKeyConstraint = (err, req, res, next) => {
   if (err.code === "23503") {
     if (err.table === "spots" || err.table === "comments") {
+      console.log(err);
       res.status(400).send({ msg: "Body Invalid" });
     } else if (err.table === "favourites") {
       switch (err.constraint) {
