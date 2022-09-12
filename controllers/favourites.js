@@ -1,4 +1,9 @@
-const { selectAllFavourites, insertFavourite, removeFavourite } = require("../models/favourites");
+const {
+  selectAllFavourites,
+  insertFavourite,
+  removeFavourite,
+  removeFavouriteByUser,
+} = require("../models/favourites");
 const { selectUserByName } = require("../models/users");
 const { fetchSpotBySpotId } = require("../models/spots");
 
@@ -32,6 +37,16 @@ exports.deleteFavourite = (req, res, next) => {
   const { favourite_id } = req.params;
 
   removeFavourite(favourite_id)
+    .then(() => {
+      res.status(204).send();
+    })
+    .catch(next);
+};
+
+exports.deleteFavouriteByUser = (req, res, next) => {
+  const { username, spot_id } = req.params;
+
+  removeFavouriteByUser(username, spot_id)
     .then(() => {
       res.status(204).send();
     })

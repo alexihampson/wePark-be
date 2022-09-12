@@ -29,7 +29,7 @@ const seed = async ({ userData, spotData, imageData, commentData, favouritesData
     upvotes INT DEFAULT 0,
     downvotes INT DEFAULT 0,
     parking_type VARCHAR NOT NULL,
-    creator VARCHAR NOT NULL REFERENCES users(username),
+    creator VARCHAR REFERENCES users(username) ON DELETE SET NULL,
     created_at TIMESTAMP DEFAULT NOW(),
     isbusy BOOLEAN DEFAULT FALSE,
     lastChanged TIMESTAMP DEFAULT NOW()
@@ -41,8 +41,8 @@ const seed = async ({ userData, spotData, imageData, commentData, favouritesData
         );`);
   await db.query(`CREATE TABLE comments (
         comment_id SERIAL PRIMARY KEY,
-        spot_id INT NOT NULL REFERENCES spots(spot_id),
-        author VARCHAR NOT NULL REFERENCES users(username),
+        spot_id INT NOT NULL REFERENCES spots(spot_id) ON DELETE CASCADE,
+        author VARCHAR REFERENCES users(username) ON DELETE SET NULL,
         body VARCHAR NOT NULL,
         upvotes INT NOT NULL DEFAULT 0,
         downvotes INT NOT NULL DEFAULT 0,
@@ -50,12 +50,12 @@ const seed = async ({ userData, spotData, imageData, commentData, favouritesData
         );`);
   await db.query(`CREATE TABLE favourites (
         favourite_id SERIAL PRIMARY KEY,
-        username VARCHAR NOT NULL REFERENCES users(username),
-        spot_id INT NOT NULL REFERENCES spots(spot_id)
+        username VARCHAR NOT NULL REFERENCES users(username) ON DELETE CASCADE,
+        spot_id INT NOT NULL REFERENCES spots(spot_id) ON DELETE CASCADE
       );`);
   await db.query(`CREATE TABLE data (
         data_id SERIAL PRIMARY KEY,
-        spot_id INT NOT NULL REFERENCES spots(spot_id),
+        spot_id INT NOT NULL REFERENCES spots(spot_id) ON DELETE CASCADE,
         isBusy BOOLEAN NOT NULL DEFAULT FALSE,
         change_time TIMESTAMP DEFAULT NOW()
       );`);
@@ -107,7 +107,7 @@ const seed = async ({ userData, spotData, imageData, commentData, favouritesData
   );
 
   const dataQueryStr = format(
-    "INSERt INTO data (spot_id, isBusy) VALUES %L RETURNING *;",
+    "INSERT INTO data (spot_id, isBusy) VALUES %L RETURNING *;",
     dataData.map(({ spot_id, isBusy }) => [spot_id, isBusy])
   );
 

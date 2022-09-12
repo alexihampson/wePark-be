@@ -1,6 +1,10 @@
 const userRouter = require("express").Router();
 const { postUser, getUserByName, getAllUsers } = require("../controllers/users");
-const { getAllFavourites, postFavourite } = require("../controllers/favourites");
+const {
+  getAllFavourites,
+  postFavourite,
+  deleteFavouriteByUser,
+} = require("../controllers/favourites");
 const multer = require("multer");
 
 const storage = multer.memoryStorage();
@@ -11,5 +15,7 @@ userRouter.route("/").get(getAllUsers).post(upload.single("avatar"), postUser);
 userRouter.route("/:username").get(getUserByName);
 
 userRouter.route("/:username/favourites").get(getAllFavourites).post(postFavourite);
+
+userRouter.route("/:username/favourites/:spot_id").delete(deleteFavouriteByUser);
 
 module.exports = userRouter;

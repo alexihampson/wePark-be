@@ -4,6 +4,7 @@ const {
   fetchSpotBySpotId,
   removeSpotBySpotId,
   updateSpotBySpotId,
+  fetchDataBySpotId
 } = require("../models/spots");
 
 exports.getSpotBySpotId = (req, res, next) => {
@@ -21,7 +22,10 @@ exports.getSpotBySpotId = (req, res, next) => {
 exports.deleteSpotBySpotId = (req, res, next) => {
   const { spot_id } = req.params;
 
-  Promise.all([removeSpotBySpotId(spot_id), fetchSpotBySpotId(spot_id)])
+  fetchSpotBySpotId(spot_id)
+    .then(() => {
+      return removeSpotBySpotId(spot_id);
+    })
     .then(() => {
       res.status(204).send();
     })
@@ -34,7 +38,11 @@ exports.patchSpotBySpotId = (req, res, next) => {
   const { spot_id } = req.params;
   const { inc_upvotes } = req.body;
   const { inc_downvotes } = req.body;
-  Promise.all([updateSpotBySpotId(spot_id, inc_upvotes, inc_downvotes), fetchSpotBySpotId(spot_id)])
+  const { isBusy } = req.body;
+  Promise.all([
+    updateSpotBySpotId(spot_id, inc_upvotes, inc_downvotes, isBusy),
+    fetchSpotBySpotId(spot_id),
+  ])
     .then(([spot]) => {
       res.status(200).send({ spot });
     })
@@ -42,6 +50,17 @@ exports.patchSpotBySpotId = (req, res, next) => {
       next(err);
     });
 };
+
+exports.getDataBySpotId = (req, res, next) => {
+  const { spot_id } = req.params; 
+  Promise.all([fetchDataBySpotId(spot_id), fetchSpotBySpotId(spot_id)])
+  .then(([spot]) => {
+    res.status(200).send({ spot });  
+  })
+  .catch((err) => {
+    next(err); 
+  })
+}
 
 exports.getAllSpots = (req, res, next) => {
   const { query } = req;
