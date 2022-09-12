@@ -107,6 +107,8 @@ exports.selectAllSpots = async (long, lat, radius, type, creator) => {
 exports.insertSpot = async (body, images) => {
   if (!images) images = [];
 
+  console.log(body);
+
   if (!body.longitude || !body.latitude || !body.name || !body.creator || !body.parking_type)
     return Promise.reject({ status: 400, msg: "Body Invalid" });
 
