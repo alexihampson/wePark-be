@@ -4,7 +4,7 @@ const {
   fetchSpotBySpotId,
   removeSpotBySpotId,
   updateSpotBySpotId,
-  fetchDataBySpotId
+  fetchDataBySpotId,
 } = require("../models/spots");
 
 exports.getSpotBySpotId = (req, res, next) => {
@@ -52,15 +52,15 @@ exports.patchSpotBySpotId = (req, res, next) => {
 };
 
 exports.getDataBySpotId = (req, res, next) => {
-  const { spot_id } = req.params; 
+  const { spot_id } = req.params;
   Promise.all([fetchDataBySpotId(spot_id), fetchSpotBySpotId(spot_id)])
-  .then(([spot]) => {
-    res.status(200).send({ spot });  
-  })
-  .catch((err) => {
-    next(err); 
-  })
-}
+    .then(([spot]) => {
+      res.status(200).send({ spot });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
 
 exports.getAllSpots = (req, res, next) => {
   const { query } = req;
@@ -68,7 +68,7 @@ exports.getAllSpots = (req, res, next) => {
   const [long, lat] = (query.coords || "53.483214,-2.200469").split(",");
   const radius = parseFloat(query.radius || 100000) / 50;
 
-  selectAllSpots(long, lat, radius, query.type, query.creator)
+  selectAllSpots(long, lat, radius, query.type, query.creator, query.area)
     .then((spots) => {
       res.status(200).send({ spots });
     })

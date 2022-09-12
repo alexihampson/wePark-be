@@ -164,31 +164,31 @@ describe("/api/spots/:spot_id", () => {
         });
     });
 
-    test('200: returns updated spot when isbusy changed', () => {
+    test("200: returns updated spot when isbusy changed", () => {
       return request(app)
-      .patch("/api/spots/1")
-      .send({
-        isBusy: true
-      })
-      .expect(200)
-      .then(({ body: { spot } }) => {
-        expect(typeof spot).toBe("object");
-        expect(spot.spot_id).toEqual(expect.any(Number));
-        expect(spot.name).toEqual(expect.any(String));
-        expect(spot.description).toEqual(expect.any(String));
-        expect(spot.longitude).toEqual(expect.any(Number));
-        expect(spot.latitude).toEqual(expect.any(Number));
-        expect(spot.opening_time).toBeOneOf([expect.any(String), null]);
-        expect(spot.closing_time).toBeOneOf([expect.any(String), null]);
-        expect(spot.time_limit).toBeOneOf([expect.any(Number), null]);
-        expect(spot.parking_type).toEqual(expect.any(String));
-        expect(spot.upvotes).toEqual(expect.any(Number));
-        expect(spot.downvotes).toEqual(expect.any(Number));
-        expect(spot.creator).toEqual(expect.any(String));
-        expect(spot.created_at).toEqual(expect.any(String));
-        expect(spot.isbusy).toEqual(true);
-        expect(spot.lastchanged).toEqual(expect.any(String));
-      })
+        .patch("/api/spots/1")
+        .send({
+          isBusy: true,
+        })
+        .expect(200)
+        .then(({ body: { spot } }) => {
+          expect(typeof spot).toBe("object");
+          expect(spot.spot_id).toEqual(expect.any(Number));
+          expect(spot.name).toEqual(expect.any(String));
+          expect(spot.description).toEqual(expect.any(String));
+          expect(spot.longitude).toEqual(expect.any(Number));
+          expect(spot.latitude).toEqual(expect.any(Number));
+          expect(spot.opening_time).toBeOneOf([expect.any(String), null]);
+          expect(spot.closing_time).toBeOneOf([expect.any(String), null]);
+          expect(spot.time_limit).toBeOneOf([expect.any(Number), null]);
+          expect(spot.parking_type).toEqual(expect.any(String));
+          expect(spot.upvotes).toEqual(expect.any(Number));
+          expect(spot.downvotes).toEqual(expect.any(Number));
+          expect(spot.creator).toEqual(expect.any(String));
+          expect(spot.created_at).toEqual(expect.any(String));
+          expect(spot.isbusy).toEqual(true);
+          expect(spot.lastchanged).toEqual(expect.any(String));
+        });
     });
 
     test("400: Returns error if missing required fields", () => {
@@ -197,7 +197,7 @@ describe("/api/spots/:spot_id", () => {
         .send({
           inc_upvotes: 0,
           inc_downvotes: 0,
-          isBusy: null
+          isBusy: null,
         })
         .expect(400)
         .then(({ body }) => {
@@ -209,7 +209,7 @@ describe("/api/spots/:spot_id", () => {
       return request(app)
         .patch("/api/spots/1")
         .send({
-          isBusy: 3
+          isBusy: 3,
         })
         .expect(400)
         .then(({ body }) => {
@@ -222,7 +222,7 @@ describe("/api/spots/:spot_id", () => {
         .patch("/api/spots/1")
         .send({
           inc_upvotes: "indeed",
-          inc_downvotes: "yes"
+          inc_downvotes: "yes",
         })
         .expect(400)
         .then(({ body }) => {
@@ -275,26 +275,26 @@ describe("/api/spots/:spot_id", () => {
 
 describe('"/api/spots/:spot_id/data"', () => {
   describe('"GET"', () => {
-    test('200: returns busy data', () => {
+    test("200: returns busy data", () => {
       return request(app)
-      .get('/api/spots/1/data')
-      .expect(200)
-      .then(({ body: { spot } }) => {
-        expect(typeof spot).toBe("object"); 
-        expect(spot.data_id).toEqual(expect.any(Number));
-        expect(spot.spot_id).toEqual(expect.any(Number));
-        expect(spot.isbusy).toEqual(expect.any(Boolean));
-        expect(spot.change_time).toEqual(expect.any(String)); 
-      })
+        .get("/api/spots/1/data")
+        .expect(200)
+        .then(({ body: { spot } }) => {
+          expect(typeof spot).toBe("object");
+          expect(spot.data_id).toEqual(expect.any(Number));
+          expect(spot.spot_id).toEqual(expect.any(Number));
+          expect(spot.isbusy).toEqual(expect.any(Boolean));
+          expect(spot.change_time).toEqual(expect.any(String));
+        });
     });
 
-    test('200: returns an empty object for an existent spot with no data', () => {
+    test("200: returns an empty object for an existent spot with no data", () => {
       return request(app)
-      .get("/api/spots/4/data")
-      .expect(200)
-      .then(({ body }) => {
-        expect(body).toEqual({}); 
-      })
+        .get("/api/spots/4/data")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toEqual({});
+        });
     });
 
     test("404: Returns error for non-existent spot", () => {
@@ -1168,7 +1168,7 @@ describe("/api/users/:username/favourites/:spot_id", () => {
 describe("/api/favourites/:favourite_id", () => {
   describe("DELETE", () => {
     test("204: Removes favourite", () => {
-      return request(app).delete("/api/favourites/1").expect(204);
+      return request(app).delete("/api/favourites/test-1_1").expect(204);
     });
 
     test("404: Favourite ID not found", () => {

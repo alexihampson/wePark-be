@@ -119,9 +119,20 @@ exports.selectAllSpots = async (long, lat, radius, type, creator, area) => {
     areaList.push(...area.split(","));
   }
 
-  whereList.push(
-    format("ST_DWithin(location, ST_GeometryFromText('POINT(%s %s)'), %s)", long, lat, radius)
-  );
+  if (areaList.length >= 6 && areaList.length % 2 === 0) {
+    areaList.push(...areaList.slice(0, 2));
+    const polyList = [];
+    for (let i = 0; i < areaList.length; i += 2) {
+      polyList.push(`${areaList[i]} ${areaList[i + 1]}`);
+    }
+    whereList.push(
+      format("ST_Intersects(location, ST_GeometryFromText('POLYGON((%s))'))", polyList.join(","))
+    );
+  } else {
+    whereList.push(
+      format("ST_DWithin(location, ST_GeometryFromText('POINT(%s %s)'), %s)", long, lat, radius)
+    );
+  }
 
   const whereSection = " WHERE " + whereList.join(" AND ");
 

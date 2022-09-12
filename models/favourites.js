@@ -36,10 +36,10 @@ exports.insertFavourite = async (username, spot_id) => {
 
   const {
     rows: [row],
-  } = await db.query("INSERT INTO favourites (spot_id, username) VALUES ($1,$2) RETURNING *;", [
-    spot_id,
-    username,
-  ]);
+  } = await db.query(
+    "INSERT INTO favourites (favourite_id, spot_id, username) VALUES ($1,$2,$3) RETURNING *;",
+    [`${username}_${spot_id}`, spot_id, username]
+  );
 
   return row;
 };

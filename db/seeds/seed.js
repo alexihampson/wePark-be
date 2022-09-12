@@ -49,7 +49,7 @@ const seed = async ({ userData, spotData, imageData, commentData, favouritesData
         created_at TIMESTAMP DEFAULT NOW()
         );`);
   await db.query(`CREATE TABLE favourites (
-        favourite_id SERIAL PRIMARY KEY,
+        favourite_id VARCHAR PRIMARY KEY,
         username VARCHAR NOT NULL REFERENCES users(username) ON DELETE CASCADE,
         spot_id INT NOT NULL REFERENCES spots(spot_id) ON DELETE CASCADE
       );`);
@@ -102,8 +102,8 @@ const seed = async ({ userData, spotData, imageData, commentData, favouritesData
   );
 
   const favouriteQueryStr = format(
-    "INSERT INTO favourites (spot_id, username) VALUES %L RETURNING *;",
-    favouritesData.map(({ spot_id, username }) => [spot_id, username])
+    "INSERT INTO favourites (favourite_id, spot_id, username) VALUES %L RETURNING *;",
+    favouritesData.map(({ spot_id, username }) => [`${username}_${spot_id}`, spot_id, username])
   );
 
   const dataQueryStr = format(
