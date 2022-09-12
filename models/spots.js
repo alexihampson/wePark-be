@@ -71,7 +71,7 @@ exports.updateSpotBySpotId = async (spot_id, inc_upvotes = 0, inc_downvotes = 0)
   return incrementVotes.rows[0];
 };
 
-exports.selectAllSpots = async (long, lat, radius, type, creator) => {
+exports.selectAllSpots = async (long, lat, radius, type, creator, area) => {
   const mainSection = format(
     "SELECT spot_id, name, ST_X(location) AS latitude, ST_Y(location) AS longitude, opening_time, closing_time, time_limit, parking_type, upvotes - downvotes AS vote_count FROM spots"
   );
@@ -86,6 +86,11 @@ exports.selectAllSpots = async (long, lat, radius, type, creator) => {
     if (!(await db.query("SELECT * FROM users WHERE username=$1;", [creator])).rows[0])
       return Promise.reject({ status: 404, msg: "User Not Found" });
     whereList.push(format("creator='%s'", creator));
+  }
+
+  const areaList = [];
+  if (area) {
+    areaList.push(...area.split(","));
   }
 
   whereList.push(
