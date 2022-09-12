@@ -53,3 +53,16 @@ exports.removeFavourite = async (favourite_id) => {
 
   return row;
 };
+
+exports.removeFavouriteByUser = async (username, spot_id) => {
+  const {
+    rows: [row],
+  } = await db.query("DELETE FROM favourites WHERE username=$1 AND spot_id=$2 RETURNING *;", [
+    username,
+    spot_id,
+  ]);
+
+  if (!row) return Promise.reject({ status: 404, msg: "Not Found" });
+
+  return row;
+};

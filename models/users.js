@@ -52,6 +52,11 @@ exports.selectUserByName = async (username) => {
 
   if (!row) return Promise.reject({ status: 404, msg: "User Not Found" });
 
+  const favs = (await db.query("SELECT spot_id FROM favourites WHERE username = $1;", [username]))
+    .rows;
+
+  row.favourites = favs.map((val) => val.spot_id);
+
   return row;
 };
 
