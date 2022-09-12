@@ -62,45 +62,42 @@ exports.updateSpotBySpotId = async (spot_id, inc_upvotes = 0, inc_downvotes = 0,
   }
 
   if (isBusy === null) {
-
-  const incrementVotes = await db.query(
-    `UPDATE spots SET upvotes = upvotes + $1, downvotes = downvotes + $2 WHERE spot_id = $3 RETURNING spot_id, name, ST_X(location) AS latitude, ST_Y(location) AS longitude, 
+    const incrementVotes = await db.query(
+      `UPDATE spots SET upvotes = upvotes + $1, downvotes = downvotes + $2 WHERE spot_id = $3 RETURNING spot_id, name, ST_X(location) AS latitude, ST_Y(location) AS longitude, 
     description, opening_time, closing_time, time_limit, upvotes, downvotes, parking_type, 
     creator, created_at, isbusy, lastchanged;`,
-    [inc_upvotes, inc_downvotes, spot_id]
-  );
+      [inc_upvotes, inc_downvotes, spot_id]
+    );
 
-  return incrementVotes.rows[0];
-
+    return incrementVotes.rows[0];
   } else {
-
     const reportBusy = await db.query(
       `UPDATE spots SET isbusy = $1, lastChanged = NOW() WHERE spot_id = $2 RETURNING spot_id, name, ST_X(location) AS latitude, ST_Y(location) AS longitude, 
       description, opening_time, closing_time, time_limit, upvotes, downvotes, parking_type, 
       creator, created_at, isbusy, lastchanged;`,
       [isBusy, spot_id]
-    )
+    );
 
-    const { isbusy } = reportBusy.rows[0]; 
-    const { lastchanged } = reportBusy.rows[0];  
+    const { isbusy } = reportBusy.rows[0];
+    const { lastchanged } = reportBusy.rows[0];
 
     const addData = await db.query(
-    `INSERT INTO data (isbusy, change_time, spot_id)
-    VALUES ($1, $2, $3) RETURNING *;`, [isbusy, lastchanged, spot_id]); 
+      `INSERT INTO data (isbusy, change_time, spot_id)
+    VALUES ($1, $2, $3) RETURNING *;`,
+      [isbusy, lastchanged, spot_id]
+    );
 
-
-    return reportBusy.rows[0]; 
-
+    return reportBusy.rows[0];
   }
 };
 
 exports.fetchDataBySpotId = async (spot_id) => {
-    const result  = await db.query(`SELECT * FROM data WHERE spot_id = $1`, [spot_id]);
+  const result = await db.query(`SELECT * FROM data WHERE spot_id = $1`, [spot_id]);
 
-    return result.rows[0]; 
-}
+  return result.rows[0];
+};
 
-exports.selectAllSpots = async (long, lat, radius, type, creator) => {
+exports.selectAllSpots = async (long, lat, radius, type, creator, area) => {
   const mainSection = format(
     "SELECT spot_id, name, ST_X(location) AS latitude, ST_Y(location) AS longitude, opening_time, closing_time, time_limit, parking_type, upvotes - downvotes AS vote_count FROM spots"
   );
@@ -117,9 +114,25 @@ exports.selectAllSpots = async (long, lat, radius, type, creator) => {
     whereList.push(format("creator='%s'", creator));
   }
 
-  whereList.push(
-    format("ST_DWithin(location, ST_GeometryFromText('POINT(%s %s)'), %s)", long, lat, radius)
-  );
+  const areaList = [];
+  if (area) {
+    areaList.push(...area.split(","));
+  }
+
+  if (areaList.length >= 6 && areaList.length % 2 === 0) {
+    areaList.push(...areaList.slice(0, 2));
+    const polyList = [];
+    for (let i = 0; i < areaList.length; i += 2) {
+      polyList.push(`${areaList[i]} ${areaList[i + 1]}`);
+    }
+    whereList.push(
+      format("ST_Intersects(location, ST_GeometryFromText('POLYGON((%s))'))", polyList.join(","))
+    );
+  } else {
+    whereList.push(
+      format("ST_DWithin(location, ST_GeometryFromText('POINT(%s %s)'), %s)", long, lat, radius)
+    );
+  }
 
   const whereSection = " WHERE " + whereList.join(" AND ");
 
@@ -144,7 +157,7 @@ exports.insertSpot = async (body, images) => {
   body.opening_time = regex.test(body.opening_time) ? body.opening_time : null;
   body.closing_time = regex.test(body.closing_time) ? body.closing_time : null;
 
-  if (body.time_limit === "null") {
+  if (body.time_limit === "null" || body.time_limit === "no limit") {
     body.time_limit = null;
   }
 
