@@ -115,7 +115,6 @@ describe("/api/spots/:spot_id", () => {
         .patch("/api/spots/1")
         .send({
           inc_upvotes: 1,
-          inc_downvotes: 0,
         })
         .expect(200)
         .then(({ body: { spot } }) => {
@@ -142,7 +141,6 @@ describe("/api/spots/:spot_id", () => {
       return request(app)
         .patch("/api/spots/1")
         .send({
-          inc_upvotes: 0,
           inc_downvotes: 1,
         })
         .expect(200)
@@ -166,12 +164,40 @@ describe("/api/spots/:spot_id", () => {
         });
     });
 
+    test('200: returns updated spot when isbusy changed', () => {
+      return request(app)
+      .patch("/api/spots/1")
+      .send({
+        isBusy: true
+      })
+      .expect(200)
+      .then(({ body: { spot } }) => {
+        expect(typeof spot).toBe("object");
+        expect(spot.spot_id).toEqual(expect.any(Number));
+        expect(spot.name).toEqual(expect.any(String));
+        expect(spot.description).toEqual(expect.any(String));
+        expect(spot.longitude).toEqual(expect.any(Number));
+        expect(spot.latitude).toEqual(expect.any(Number));
+        expect(spot.opening_time).toBeOneOf([expect.any(String), null]);
+        expect(spot.closing_time).toBeOneOf([expect.any(String), null]);
+        expect(spot.time_limit).toBeOneOf([expect.any(Number), null]);
+        expect(spot.parking_type).toEqual(expect.any(String));
+        expect(spot.upvotes).toEqual(expect.any(Number));
+        expect(spot.downvotes).toEqual(expect.any(Number));
+        expect(spot.creator).toEqual(expect.any(String));
+        expect(spot.created_at).toEqual(expect.any(String));
+        expect(spot.isbusy).toEqual(true);
+        expect(spot.lastchanged).toEqual(expect.any(String));
+      })
+    });
+
     test("400: Returns error if missing required fields", () => {
       return request(app)
         .patch("/api/spots/1")
         .send({
           inc_upvotes: 0,
           inc_downvotes: 0,
+          isBusy: null
         })
         .expect(400)
         .then(({ body }) => {
@@ -183,8 +209,20 @@ describe("/api/spots/:spot_id", () => {
       return request(app)
         .patch("/api/spots/1")
         .send({
-          inc_upvotes: "cat",
-          inc_downvotes: "dog",
+          isBusy: 3
+        })
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad Request");
+        });
+    });
+
+    test("400: Returns error if fields are of incorrect type ", () => {
+      return request(app)
+        .patch("/api/spots/1")
+        .send({
+          inc_upvotes: "indeed",
+          inc_downvotes: "yes"
         })
         .expect(400)
         .then(({ body }) => {
@@ -197,7 +235,6 @@ describe("/api/spots/:spot_id", () => {
         .patch("/api/spots/1000")
         .send({
           inc_upvotes: 1,
-          inc_downvotes: 0,
         })
         .expect(404)
         .then(({ body }) => {
