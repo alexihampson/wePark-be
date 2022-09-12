@@ -119,8 +119,6 @@ exports.insertSpot = async (body, images) => {
     body.time_limit = null;
   }
 
-  console.log("before insert", body);
-
   const insertQuery = format(
     `INSERT INTO spots (name, description, location, opening_time, closing_time, time_limit, parking_type, creator) VALUES (%L) RETURNING spot_id, name, ST_X(location) AS latitude, ST_Y(location) AS longitude, 
     description, opening_time, closing_time, time_limit, upvotes, downvotes, parking_type, 
@@ -142,8 +140,6 @@ exports.insertSpot = async (body, images) => {
   } = await db.query(insertQuery);
 
   const spot_id = row.spot_id;
-
-  console.log("before images", body);
 
   const imageUrls = [];
 
@@ -168,8 +164,6 @@ exports.insertSpot = async (body, images) => {
       ])
     )
   );
-
-  console.log("after all", body);
 
   delete Object.assign(row, { ["coords"]: row["location"] })["location"];
 
