@@ -4,6 +4,7 @@ const {
   fetchSpotBySpotId,
   removeSpotBySpotId,
   updateSpotBySpotId,
+  fetchDataBySpotId
 } = require("../models/spots");
 
 exports.getSpotBySpotId = (req, res, next) => {
@@ -49,6 +50,17 @@ exports.patchSpotBySpotId = (req, res, next) => {
       next(err);
     });
 };
+
+exports.getDataBySpotId = (req, res, next) => {
+  const { spot_id } = req.params; 
+  Promise.all([fetchDataBySpotId(spot_id), fetchSpotBySpotId(spot_id)])
+  .then(([spot]) => {
+    res.status(200).send({ spot });  
+  })
+  .catch((err) => {
+    next(err); 
+  })
+}
 
 exports.getAllSpots = (req, res, next) => {
   const { query } = req;
