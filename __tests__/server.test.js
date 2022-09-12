@@ -599,6 +599,7 @@ describe("/api/users/:username", () => {
           expect(user.email).toBe(test.email);
           expect(user.karma).toEqual(expect.any(Number));
           expect(user.created_at).toEqual(expect.any(String));
+          expect(user.favourites).toEqual(expect.any(Array));
         });
     });
 
@@ -1061,6 +1062,32 @@ describe("/api/users/:username/favourites", () => {
         .expect(400)
         .then((res) => {
           expect(res.body.msg).toBe("Body Invalid");
+        });
+    });
+  });
+});
+
+describe("/api/users/:username/favourites/:spot_id", () => {
+  describe("DELETE", () => {
+    test("200: Returns list of spots", () => {
+      return request(app).delete("/api/users/test-1/favourites/1").expect(204);
+    });
+
+    test("404: User not Found", () => {
+      return request(app)
+        .delete("/api/users/cat/favourites/1")
+        .expect(404)
+        .then((res) => {
+          expect(res.body.msg).toBe("Not Found");
+        });
+    });
+
+    test("404: Spot not Found", () => {
+      return request(app)
+        .delete("/api/users/test-1/favourites/100")
+        .expect(404)
+        .then((res) => {
+          expect(res.body.msg).toBe("Not Found");
         });
     });
   });
