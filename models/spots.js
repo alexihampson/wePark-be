@@ -53,13 +53,15 @@ exports.removeSpotBySpotId = async (spot_id) => {
   return (deleteSpot = await db.query(`DELETE FROM spots WHERE spot_id = $1`, [spot_id]));
 };
 
-exports.updateSpotBySpotId = async (spot_id, inc_upvotes = 0, inc_downvotes = 0) => {
-  if (!inc_upvotes && !inc_downvotes) {
+exports.updateSpotBySpotId = async (spot_id, inc_upvotes = 0, inc_downvotes = 0, isBusy = null) => {
+  if (!inc_upvotes && !inc_downvotes && isBusy === null) {
     return Promise.reject({
       status: 400,
       msg: "Missing required fields",
     });
   }
+
+  if (isBusy === null) {
 
   const incrementVotes = await db.query(
     `UPDATE spots SET upvotes = upvotes + $1, downvotes = downvotes + $2 WHERE spot_id = $3 RETURNING spot_id, name, ST_X(location) AS latitude, ST_Y(location) AS longitude, 
@@ -69,6 +71,27 @@ exports.updateSpotBySpotId = async (spot_id, inc_upvotes = 0, inc_downvotes = 0)
   );
 
   return incrementVotes.rows[0];
+
+  } else {
+
+    const reportBusy = await db.query(
+      `UPDATE spots SET isbusy = $1, lastChanged = NOW() WHERE spot_id = $2 RETURNING spot_id, name, ST_X(location) AS latitude, ST_Y(location) AS longitude, 
+      description, opening_time, closing_time, time_limit, upvotes, downvotes, parking_type, 
+      creator, created_at, isbusy, lastchanged;`,
+      [isBusy, spot_id]
+    )
+
+    const { isbusy } = reportBusy.rows[0]; 
+    const { lastchanged } = reportBusy.rows[0];  
+
+    const addData = await db.query(
+    `INSERT INTO data (isbusy, change_time, spot_id)
+    VALUES ($1, $2, $3) RETURNING *;`, [isbusy, lastchanged, spot_id]); 
+
+
+    return reportBusy.rows[0]; 
+
+  }
 };
 
 exports.selectAllSpots = async (long, lat, radius, type, creator) => {

@@ -34,7 +34,8 @@ exports.patchSpotBySpotId = (req, res, next) => {
   const { spot_id } = req.params;
   const { inc_upvotes } = req.body;
   const { inc_downvotes } = req.body;
-  Promise.all([updateSpotBySpotId(spot_id, inc_upvotes, inc_downvotes), fetchSpotBySpotId(spot_id)])
+  const { isBusy } = req.body; 
+  Promise.all([updateSpotBySpotId(spot_id, inc_upvotes, inc_downvotes, isBusy), fetchSpotBySpotId(spot_id)])
     .then(([spot]) => {
       res.status(200).send({ spot });
     })
