@@ -157,7 +157,7 @@ exports.insertSpot = async (body, images) => {
   body.opening_time = regex.test(body.opening_time) ? body.opening_time : null;
   body.closing_time = regex.test(body.closing_time) ? body.closing_time : null;
 
-  if (body.time_limit === "null") {
+  if (body.time_limit === "null" || body.time_limit === "no limit") {
     body.time_limit = null;
   }
 
