@@ -273,6 +273,41 @@ describe("/api/spots/:spot_id", () => {
   });
 });
 
+describe('"/api/spots/:spot_id/data"', () => {
+  describe('"GET"', () => {
+    test('200: returns busy data', () => {
+      return request(app)
+      .get('/api/spots/1/data')
+      .expect(200)
+      .then(({ body: { spot } }) => {
+        expect(typeof spot).toBe("object"); 
+        expect(spot.data_id).toEqual(expect.any(Number));
+        expect(spot.spot_id).toEqual(expect.any(Number));
+        expect(spot.isbusy).toEqual(expect.any(Boolean));
+        expect(spot.change_time).toEqual(expect.any(String)); 
+      })
+    });
+
+    test('200: returns an empty object for an existent spot with no data', () => {
+      return request(app)
+      .get("/api/spots/4/data")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toEqual({}); 
+      })
+    });
+
+    test("404: Returns error for non-existent spot", () => {
+      return request(app)
+        .get("/api/spots/1000/data")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Spot Not Found");
+        });
+    });
+  });
+});
+
 describe("/api/spots", () => {
   describe("GET", () => {
     test("200: Returns list of spots", () => {

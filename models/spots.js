@@ -94,6 +94,12 @@ exports.updateSpotBySpotId = async (spot_id, inc_upvotes = 0, inc_downvotes = 0,
   }
 };
 
+exports.fetchDataBySpotId = async (spot_id) => {
+    const result  = await db.query(`SELECT * FROM data WHERE spot_id = $1`, [spot_id]);
+
+    return result.rows[0]; 
+}
+
 exports.selectAllSpots = async (long, lat, radius, type, creator) => {
   const mainSection = format(
     "SELECT spot_id, name, ST_X(location) AS latitude, ST_Y(location) AS longitude, opening_time, closing_time, time_limit, parking_type, upvotes - downvotes AS vote_count FROM spots"
