@@ -5,6 +5,7 @@ const {
   getSpotBySpotId,
   deleteSpotBySpotId,
   patchSpotBySpotId,
+  getDataBySpotId
 } = require("../controllers/spots");
 const { getCommentsBySpot, postCommentsBySpot } = require("../controllers/comments");
 const multer = require("multer");
@@ -19,6 +20,11 @@ spotRouter
   .get(getSpotBySpotId)
   .delete(deleteSpotBySpotId)
   .patch(patchSpotBySpotId);
+
+spotRouter
+  .route("/:spot_id/data")
+  .get(getDataBySpotId)
+
 
 spotRouter.route("/:spot_id/comments").get(getCommentsBySpot).post(postCommentsBySpot);
 
