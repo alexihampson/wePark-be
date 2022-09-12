@@ -107,7 +107,7 @@ exports.selectAllSpots = async (long, lat, radius, type, creator) => {
 exports.insertSpot = async (body, images) => {
   if (!images) images = [];
 
-  console.log(body);
+  console.log("added", body);
 
   if (!body.longitude || !body.latitude || !body.name || !body.creator || !body.parking_type)
     return Promise.reject({ status: 400, msg: "Body Invalid" });
@@ -116,6 +116,8 @@ exports.insertSpot = async (body, images) => {
 
   body.opening_time = regex.test(body.opening_time) ? body.opening_time : null;
   body.closing_time = regex.test(body.closing_time) ? body.closing_time : null;
+
+  console.log("before insert", body);
 
   const insertQuery = format(
     `INSERT INTO spots (name, description, location, opening_time, closing_time, time_limit, parking_type, creator) VALUES (%L) RETURNING spot_id, name, ST_X(location) AS latitude, ST_Y(location) AS longitude, 
@@ -138,6 +140,8 @@ exports.insertSpot = async (body, images) => {
   } = await db.query(insertQuery);
 
   const spot_id = row.spot_id;
+
+  console.log("before images", body);
 
   const imageUrls = [];
 
@@ -162,6 +166,8 @@ exports.insertSpot = async (body, images) => {
       ])
     )
   );
+
+  console.log("after all", body);
 
   delete Object.assign(row, { ["coords"]: row["location"] })["location"];
 
