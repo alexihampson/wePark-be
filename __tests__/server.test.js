@@ -3,6 +3,7 @@ const app = require("../server");
 const db = require("../db/connection");
 const data = require("../db/data/test-data");
 const seed = require("../db/seeds/seed");
+const endpoints = require("../endpoints.json");
 
 beforeEach(() => seed(data));
 
@@ -12,12 +13,12 @@ afterAll(() => {
 
 describe("/api", () => {
   describe("GET", () => {
-    test("200: Return hello message", () => {
+    test("200: Returns endpoints info", () => {
       return request(app)
         .get("/api")
         .expect(200)
         .then((res) => {
-          expect(res.body.msg).toBe("Hello");
+          expect(res.body).toEqual({ endpoints });
         });
     });
   });
