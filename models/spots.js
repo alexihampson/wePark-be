@@ -218,3 +218,21 @@ exports.insertSpot = async (body, images) => {
 
   return [row, imageRows.map((row) => row.rows[0].image_url).join(",")];
 };
+
+exports.randomSpot = async () => {
+  const { rows } = await db.query(
+    `SELECT spots.spot_id AS spot_id FROM spots 
+    LEFT JOIN images ON spots.spot_id = images.spot_id 
+    LEFT JOIN comments ON spots.spot_id = comments.spot_id  
+    GROUP BY spots.spot_id 
+    HAVING (SELECT COUNT(images.image_url) :: INT) > 0
+    ORDER BY spots.upvotes-spots.downvotes DESC, (SELECT COUNT(images.image_url) :: INT) DESC, (SELECT COUNT(comments.comment_id) :: INT) DESC
+    LIMIT 5;`
+  );
+
+  const key = Math.floor(Math.random() * rows.length);
+
+  const spot_id = rows[key].spot_id;
+
+  return this.fetchSpotBySpotId(spot_id);
+};
