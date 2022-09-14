@@ -1253,3 +1253,32 @@ describe("/api/favourites/:favourite_id", () => {
     });
   });
 });
+
+describe("/api/spots/random", () => {
+  describe("GET", () => {
+    test("200: Returns a spot", () => {
+      return request(app)
+        .get("/api/spots/random")
+        .expect(200)
+        .then(({ body: { spot } }) => {
+          expect(typeof spot).toBe("object");
+          expect(spot.spot_id).toEqual(expect.any(Number));
+          expect(spot.name).toEqual(expect.any(String));
+          expect(spot.description).toEqual(expect.any(String));
+          expect(spot.longitude).toEqual(expect.any(Number));
+          expect(spot.latitude).toEqual(expect.any(Number));
+          expect(spot.opening_time).toBeOneOf([expect.any(String), null]);
+          expect(spot.closing_time).toBeOneOf([expect.any(String), null]);
+          expect(spot.time_limit).toBeOneOf([expect.any(Number), null]);
+          expect(spot.parking_type).toEqual(expect.any(String));
+          expect(spot.upvotes).toEqual(expect.any(Number));
+          expect(spot.downvotes).toEqual(expect.any(Number));
+          expect(spot.creator).toEqual(expect.any(String));
+          expect(spot.created_at).toEqual(expect.any(String));
+          expect(spot.isbusy).toEqual(expect.any(Boolean));
+          expect(spot.lastchanged).toEqual(expect.any(String));
+          expect(spot.images).toEqual(expect.any(String));
+        });
+    });
+  });
+});
