@@ -5,6 +5,7 @@ const {
   removeSpotBySpotId,
   updateSpotBySpotId,
   fetchDataBySpotId,
+  randomSpot,
 } = require("../models/spots");
 
 exports.getSpotBySpotId = (req, res, next) => {
@@ -80,6 +81,14 @@ exports.postSpot = (req, res, next) => {
     .then(([spot, images]) => {
       spot.images = images;
       res.status(201).send({ spot });
+    })
+    .catch(next);
+};
+
+exports.getRandomSpot = (req, res, next) => {
+  randomSpot(req.query.limit)
+    .then((spot) => {
+      res.status(200).send({ spot });
     })
     .catch(next);
 };

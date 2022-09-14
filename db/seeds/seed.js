@@ -15,7 +15,8 @@ const seed = async ({ userData, spotData, imageData, commentData, favouritesData
     about VARCHAR,
     email VARCHAR,
     karma INT DEFAULT 0,
-    created_at TIMESTAMP DEFAULT NOW()
+    created_at TIMESTAMP DEFAULT NOW(),
+    hash VARCHAR NOT NULL
   );`);
 
   await db.query(`CREATE TABLE spots (
@@ -61,8 +62,14 @@ const seed = async ({ userData, spotData, imageData, commentData, favouritesData
       );`);
 
   const userQueryStr = format(
-    "INSERT INTO users (username, avatar_url, about, email) VALUES %L RETURNING *;",
-    userData.map(({ username, avatar_url, about, email }) => [username, avatar_url, about, email])
+    "INSERT INTO users (username, avatar_url, about, email, hash) VALUES %L RETURNING *;",
+    userData.map(({ username, avatar_url, about, email, hash }) => [
+      username,
+      avatar_url,
+      about,
+      email,
+      hash,
+    ])
   );
 
   const spotQueryStr = format(

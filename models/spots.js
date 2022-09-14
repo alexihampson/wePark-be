@@ -69,6 +69,13 @@ exports.updateSpotBySpotId = async (spot_id, inc_upvotes = 0, inc_downvotes = 0,
       [inc_upvotes, inc_downvotes, spot_id]
     );
 
+    const inc_karma = inc_upvotes - inc_downvotes;
+
+    db.query("UPDATE users SET karma=karma+$1 WHERE username=$2;", [
+      inc_karma,
+      incrementVotes.rows[0].creator,
+    ]);
+
     return incrementVotes.rows[0];
   } else {
     const reportBusy = await db.query(
@@ -99,7 +106,7 @@ exports.fetchDataBySpotId = async (spot_id) => {
 
 exports.selectAllSpots = async (long, lat, radius, type, creator, area) => {
   const mainSection = format(
-    "SELECT spot_id, name, ST_X(location) AS latitude, ST_Y(location) AS longitude, opening_time, closing_time, time_limit, parking_type, upvotes - downvotes AS vote_count FROM spots"
+    "SELECT spot_id, name, ST_X(location) AS latitude, ST_Y(location) AS longitude, description, opening_time, closing_time, time_limit, parking_type, upvotes - downvotes AS vote_count FROM spots"
   );
 
   const whereList = [];
@@ -210,4 +217,23 @@ exports.insertSpot = async (body, images) => {
   delete Object.assign(row, { ["coords"]: row["location"] })["location"];
 
   return [row, imageRows.map((row) => row.rows[0].image_url).join(",")];
+};
+
+exports.randomSpot = async (limit = 5) => {
+  const { rows } = await db.query(
+    `SELECT spots.spot_id AS spot_id FROM spots 
+    LEFT JOIN images ON spots.spot_id = images.spot_id 
+    LEFT JOIN comments ON spots.spot_id = comments.spot_id  
+    GROUP BY spots.spot_id 
+    HAVING (SELECT COUNT(images.image_url) :: INT) > 0
+    ORDER BY spots.upvotes-spots.downvotes DESC, (SELECT COUNT(images.image_url) :: INT) DESC, (SELECT COUNT(comments.comment_id) :: INT) DESC
+    LIMIT $1;`,
+    [limit]
+  );
+
+  const key = Math.floor(Math.random() * rows.length);
+
+  const spot_id = rows[key].spot_id;
+
+  return this.fetchSpotBySpotId(spot_id);
 };

@@ -567,6 +567,7 @@ describe("/api/users", () => {
         username: "test-upload-1",
         about: "Hello I am a real human person",
         email: "test@test.test",
+        password: "password",
       };
       return request(app)
         .post("/api/users")
@@ -589,6 +590,7 @@ describe("/api/users", () => {
         about: "Hello I am a real human person",
         email: "test@test.test",
         cat: "cat",
+        password: "password",
       };
       return request(app)
         .post("/api/users")
@@ -608,6 +610,7 @@ describe("/api/users", () => {
     test("201: Handles missing unneccesary keys", () => {
       const body = {
         username: "test-upload-1",
+        password: "password",
       };
       return request(app)
         .post("/api/users")
@@ -643,6 +646,7 @@ describe("/api/users", () => {
         username: "test-1",
         about: "Hello I am a real human person",
         email: "test@test.test",
+        password: "password",
       };
       return request(app)
         .post("/api/users")
@@ -679,6 +683,124 @@ describe("/api/users/:username", () => {
       const username = "IDontExist";
       return request(app)
         .get(`/api/users/${username}`)
+        .expect(404)
+        .then((res) => {
+          expect(res.body.msg).toBe("User Not Found");
+        });
+    });
+  });
+
+  describe("PATCH", () => {
+    test("200: Returns updated user", () => {
+      const test = {
+        about: "test",
+        email: "test@email.com",
+      };
+      return request(app)
+        .patch(`/api/users/test-1`)
+        .send(test)
+        .expect(200)
+        .then((res) => {
+          expect(res.body.user.about).toBe(test.about);
+          expect(res.body.user.email).toBe(test.email);
+        });
+    });
+
+    test("200: Handles missing key", () => {
+      const test = {
+        about: "test",
+      };
+      return request(app)
+        .patch(`/api/users/test-1`)
+        .send(test)
+        .expect(200)
+        .then((res) => {
+          expect(res.body.user.about).toBe(test.about);
+        });
+    });
+
+    test("200: Ignores unused keys", () => {
+      const test = {
+        about: "test",
+        email: "test@email.com",
+        cat: "cat",
+      };
+      return request(app)
+        .patch(`/api/users/test-1`)
+        .send(test)
+        .expect(200)
+        .then((res) => {
+          expect(res.body.user.about).toBe(test.about);
+          expect(res.body.user.email).toBe(test.email);
+        });
+    });
+
+    test("400: Body Invalid if missing keys", () => {
+      const test = {
+        cat: "cat",
+      };
+      return request(app)
+        .patch(`/api/users/test-1`)
+        .send(test)
+        .expect(400)
+        .then((res) => {
+          expect(res.body.msg).toBe("Body Invalid");
+        });
+    });
+
+    test("404: Not Found If Wrong User", () => {
+      const test = {
+        about: "cat",
+      };
+      return request(app)
+        .patch(`/api/users/test-100`)
+        .send(test)
+        .expect(404)
+        .then((res) => {
+          expect(res.body.msg).toBe("Not Found");
+        });
+    });
+  });
+
+  describe("POST", () => {
+    test("200: Returns user with valid password", () => {
+      const username = "test-1";
+      const password = { password: "password" };
+      const [test] = data.userData.filter((user) => user.username === username);
+      return request(app)
+        .post(`/api/users/${username}`)
+        .send(password)
+        .expect(200)
+        .then((res) => {
+          const user = res.body.user;
+          expect(user.username).toBe(test.username);
+          expect(user.avatar_url).toBe(test.avatar_url);
+          expect(user.about).toBe(test.about);
+          expect(user.email).toBe(test.email);
+          expect(user.karma).toEqual(expect.any(Number));
+          expect(user.created_at).toEqual(expect.any(String));
+          expect(user.favourites).toEqual(expect.any(Array));
+        });
+    });
+
+    test("401: Returns Invalid Password", () => {
+      const username = "test-1";
+      const password = { password: "password1" };
+      return request(app)
+        .post(`/api/users/${username}`)
+        .send(password)
+        .expect(401)
+        .then((res) => {
+          expect(res.body.msg).toBe("Password Incorrect");
+        });
+    });
+
+    test("404: User not found", () => {
+      const username = "test-100";
+      const password = { password: "password" };
+      return request(app)
+        .post(`/api/users/${username}`)
+        .send(password)
         .expect(404)
         .then((res) => {
           expect(res.body.msg).toBe("User Not Found");
@@ -1177,6 +1299,35 @@ describe("/api/favourites/:favourite_id", () => {
         .expect(404)
         .then((res) => {
           expect(res.body.msg).toBe("ID Not Found");
+        });
+    });
+  });
+});
+
+describe("/api/spots/random", () => {
+  describe("GET", () => {
+    test("200: Returns a spot", () => {
+      return request(app)
+        .get("/api/spots/random")
+        .expect(200)
+        .then(({ body: { spot } }) => {
+          expect(typeof spot).toBe("object");
+          expect(spot.spot_id).toEqual(expect.any(Number));
+          expect(spot.name).toEqual(expect.any(String));
+          expect(spot.description).toEqual(expect.any(String));
+          expect(spot.longitude).toEqual(expect.any(Number));
+          expect(spot.latitude).toEqual(expect.any(Number));
+          expect(spot.opening_time).toBeOneOf([expect.any(String), null]);
+          expect(spot.closing_time).toBeOneOf([expect.any(String), null]);
+          expect(spot.time_limit).toBeOneOf([expect.any(Number), null]);
+          expect(spot.parking_type).toEqual(expect.any(String));
+          expect(spot.upvotes).toEqual(expect.any(Number));
+          expect(spot.downvotes).toEqual(expect.any(Number));
+          expect(spot.creator).toEqual(expect.any(String));
+          expect(spot.created_at).toEqual(expect.any(String));
+          expect(spot.isbusy).toEqual(expect.any(Boolean));
+          expect(spot.lastchanged).toEqual(expect.any(String));
+          expect(spot.images).toEqual(expect.any(String));
         });
     });
   });

@@ -1,5 +1,11 @@
 const userRouter = require("express").Router();
-const { postUser, getUserByName, getAllUsers } = require("../controllers/users");
+const {
+  postUser,
+  getUserByName,
+  getAllUsers,
+  patchUserByName,
+  postUserByNameWithPass,
+} = require("../controllers/users");
 const {
   getAllFavourites,
   postFavourite,
@@ -12,7 +18,11 @@ const upload = multer({ storage });
 
 userRouter.route("/").get(getAllUsers).post(upload.single("avatar"), postUser);
 
-userRouter.route("/:username").get(getUserByName);
+userRouter
+  .route("/:username")
+  .get(getUserByName)
+  .patch(upload.single("avatar"), patchUserByName)
+  .post(postUserByNameWithPass);
 
 userRouter.route("/:username/favourites").get(getAllFavourites).post(postFavourite);
 
