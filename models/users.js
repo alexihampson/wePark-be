@@ -71,6 +71,8 @@ exports.updateUser = async (username, body, avatar) => {
 
   const currUser = (await db.query("SELECT * FROM users WHERE username=$1;", [username])).rows[0];
 
+  if (!currUser) return Promise.reject({ status: 404, msg: "Not Found" });
+
   let avatar_url = currUser.avatar_url;
 
   if (avatar) {
@@ -90,7 +92,7 @@ exports.updateUser = async (username, body, avatar) => {
     ) {
       s3.deleteObject({
         Bucket: process.env.AWS_S3_BUCKET_NAME,
-        Key: currUser.avatar_url,
+        Key: currUser.avatar_url.split("/").pop(),
       }).promise();
     }
   }
