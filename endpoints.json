@@ -1,0 +1,122 @@
+{
+  "/api": {
+    "description": "Delivers a json object describing all available endpoints"
+  },
+  "/api/spots": {
+    "GET": {
+      "description": "Delivers a json object listing up to 200 spots withing the location given",
+      "queries": {
+        "coords": {
+          "description": "Takes a pair of lat-long coords",
+          "example": "52.43652356523,-2.536356536",
+          "default": "53.483214,-2.200469"
+        },
+        "radius": {
+          "description": "Takes a number giving a distance from the coords given",
+          "example": "5000",
+          "default": "100000"
+        },
+        "type": {
+          "description": "Takes a value to filter result by parking type",
+          "example": "carpark",
+          "default": null
+        },
+        "creator": {
+          "description": "Takes a username to filter the spots by the creator",
+          "example": "johnsmith",
+          "default": null
+        },
+        "area": {
+          "description": "Takes a series of coords listing the corners of a polygon and returns all element within the area",
+          "example": "53.483214,-2.200469,51.483343,-2.200469,51.483214,-1.200469,53.483214,-1.200469",
+          "default": null
+        }
+      },
+      "exampleResponse": {
+        "spots": [
+          {
+            "spot_id": 1,
+            "name": "test-loc-1",
+            "latitude": 53.48363498552054,
+            "longitude": -2.200177360492964,
+            "opening_time": "00:00:00",
+            "closing_time": "00:00:00",
+            "time_limit": null,
+            "parking_type": "street",
+            "vote_count": 0
+          },
+          {
+            "spot_id": 7,
+            "name": "test-loc-7",
+            "latitude": 53.49720168206497,
+            "longitude": -2.189830739613574,
+            "opening_time": "01:25:00",
+            "closing_time": "06:57:00",
+            "time_limit": 30,
+            "parking_type": "street",
+            "vote_count": 0
+          },
+          {
+            "spot_id": 3,
+            "name": "test-loc-3",
+            "latitude": 53.48090646124613,
+            "longitude": -2.236966746869063,
+            "opening_time": null,
+            "closing_time": null,
+            "time_limit": 300,
+            "parking_type": "carpark",
+            "vote_count": 0
+          },
+          {
+            "spot_id": 8,
+            "name": "test-loc-8",
+            "latitude": 53.5136790689733,
+            "longitude": -2.2247766840792207,
+            "opening_time": null,
+            "closing_time": null,
+            "time_limit": 10,
+            "parking_type": "street",
+            "vote_count": 0
+          }
+        ]
+      }
+    },
+    "POST": {
+      "description": "Takes a multipart form to create a new spot",
+      "exampleBody": {
+        "name": "test",
+        "description": "test",
+        "longitude": "-2.200177360492964",
+        "latitude": "53.48363498552054",
+        "creator": "testuser",
+        "parking_type": "carpark",
+        "opening_time": "00:00:00",
+        "closing_time": "06:57:00",
+        "time_limit": 120,
+        "images": "*File Blob*"
+      },
+      "requiredKeys": ["name", "longitude", "latitude", "creator", "parking_type"],
+      "exampleResponse": {
+        "spot": {
+          "spot_id": 1,
+          "name": "test-loc-1",
+          "latitude": 53.48363498552054,
+          "longitude": -2.200177360492964,
+          "description": "We gotta burn the rain forest, dump toxic waste, pollute the air, and rip up the OZONE!",
+          "opening_time": "00:00:00",
+          "closing_time": "00:00:00",
+          "time_limit": null,
+          "upvotes": 0,
+          "downvotes": 0,
+          "parking_type": "street",
+          "creator": "test-1",
+          "created_at": "2022-09-12T12:14:26.232Z",
+          "isbusy": false,
+          "lastchanged": "2022-09-12T12:14:26.232Z",
+          "images": "https://2022-6-sem1-proj5.s3.amazonaws.com/Briefing-Note_Development-and-Biodiversity-in-Greater-Manchester.jpg,https://2022-6-sem1-proj5.s3.amazonaws.com/crowne-plaza-manchester-7711287718-4x3.jpg,https://2022-6-sem1-proj5.s3.amazonaws.com/Manchester-Eng.jpg",
+          "image_count": 3
+        }
+      }
+    }
+  }
+}
