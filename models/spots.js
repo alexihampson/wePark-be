@@ -106,7 +106,7 @@ exports.fetchDataBySpotId = async (spot_id) => {
 
 exports.selectAllSpots = async (long, lat, radius, type, creator, area) => {
   const mainSection = format(
-    "SELECT spot_id, name, ST_X(location) AS latitude, ST_Y(location) AS longitude, opening_time, closing_time, time_limit, parking_type, upvotes - downvotes AS vote_count FROM spots"
+    "SELECT spot_id, name, ST_X(location) AS latitude, ST_Y(location) AS longitude, description, opening_time, closing_time, time_limit, parking_type, upvotes - downvotes AS vote_count FROM spots"
   );
 
   const whereList = [];
