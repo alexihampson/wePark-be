@@ -3,9 +3,10 @@ const spotRouter = require("./spot-router");
 const userRouter = require("./user-router");
 const commentRouter = require("./comment-router");
 const favouriteRouter = require("./favourite-router");
+const endpoints = require("../endpoints.json");
 
 apiRouter.get("/", (req, res) => {
-  res.status(200).send({ msg: "Hello" });
+  res.status(200).send({ endpoints });
 });
 
 apiRouter.use("/spots", spotRouter);
