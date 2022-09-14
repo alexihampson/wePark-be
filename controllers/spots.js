@@ -86,7 +86,7 @@ exports.postSpot = (req, res, next) => {
 };
 
 exports.getRandomSpot = (req, res, next) => {
-  randomSpot()
+  randomSpot(req.query.limit)
     .then((spot) => {
       res.status(200).send({ spot });
     })
