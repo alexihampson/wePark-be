@@ -69,6 +69,13 @@ exports.updateSpotBySpotId = async (spot_id, inc_upvotes = 0, inc_downvotes = 0,
       [inc_upvotes, inc_downvotes, spot_id]
     );
 
+    const inc_karma = inc_upvotes - inc_downvotes;
+
+    db.query("UPDATE users SET karma=karma+$1 WHERE username=$2;", [
+      inc_karma,
+      incrementVotes.rows[0].creator,
+    ]);
+
     return incrementVotes.rows[0];
   } else {
     const reportBusy = await db.query(

@@ -65,3 +65,44 @@ exports.selectAllUsers = async () => {
 
   return rows;
 };
+
+exports.updateUser = async (username, body, avatar) => {
+  if (!body.about && !body.email) return Promise.reject({ status: 400, msg: "Body Invalid" });
+
+  const currUser = (await db.query("SELECT * FROM users WHERE username=$1;", [username])).rows[0];
+
+  if (!currUser) return Promise.reject({ status: 404, msg: "Not Found" });
+
+  let avatar_url = currUser.avatar_url;
+
+  if (avatar) {
+    const blob = avatar.buffer;
+    const imagePath = `${avatar.fieldname}_${Date.now()}_${avatar.originalname}`;
+    const uploadedImage = await s3
+      .upload({
+        Bucket: process.env.AWS_S3_BUCKET_NAME,
+        Key: imagePath,
+        Body: blob,
+      })
+      .promise();
+    avatar_url = uploadedImage.Location;
+
+    if (
+      currUser.avatar_url !== "https://2022-6-sem1-proj5.s3.amazonaws.com/avatar-icon-white.jpg"
+    ) {
+      s3.deleteObject({
+        Bucket: process.env.AWS_S3_BUCKET_NAME,
+        Key: currUser.avatar_url.split("/").pop(),
+      }).promise();
+    }
+  }
+
+  const {
+    rows: [row],
+  } = await db.query(
+    "UPDATE users SET avatar_url=$1,about=$2,email=$3 WHERE username=$4 RETURNING *;",
+    [avatar_url, body.about || currUser.about, body.email || currUser.email, username]
+  );
+
+  return row;
+};

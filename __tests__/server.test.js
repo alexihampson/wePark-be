@@ -685,6 +685,78 @@ describe("/api/users/:username", () => {
         });
     });
   });
+
+  describe("PATCH", () => {
+    test("200: Returns updated user", () => {
+      const test = {
+        about: "test",
+        email: "test@email.com",
+      };
+      return request(app)
+        .patch(`/api/users/test-1`)
+        .send(test)
+        .expect(200)
+        .then((res) => {
+          expect(res.body.user.about).toBe(test.about);
+          expect(res.body.user.email).toBe(test.email);
+        });
+    });
+
+    test("200: Handles missing key", () => {
+      const test = {
+        about: "test",
+      };
+      return request(app)
+        .patch(`/api/users/test-1`)
+        .send(test)
+        .expect(200)
+        .then((res) => {
+          expect(res.body.user.about).toBe(test.about);
+        });
+    });
+
+    test("200: Ignores unused keys", () => {
+      const test = {
+        about: "test",
+        email: "test@email.com",
+        cat: "cat",
+      };
+      return request(app)
+        .patch(`/api/users/test-1`)
+        .send(test)
+        .expect(200)
+        .then((res) => {
+          expect(res.body.user.about).toBe(test.about);
+          expect(res.body.user.email).toBe(test.email);
+        });
+    });
+
+    test("400: Body Invalid if missing keys", () => {
+      const test = {
+        cat: "cat",
+      };
+      return request(app)
+        .patch(`/api/users/test-1`)
+        .send(test)
+        .expect(400)
+        .then((res) => {
+          expect(res.body.msg).toBe("Body Invalid");
+        });
+    });
+
+    test("404: Not Found If Wrong User", () => {
+      const test = {
+        about: "cat",
+      };
+      return request(app)
+        .patch(`/api/users/test-100`)
+        .send(test)
+        .expect(404)
+        .then((res) => {
+          expect(res.body.msg).toBe("Not Found");
+        });
+    });
+  });
 });
 
 describe("/api/spots/:spot_id/comments", () => {
