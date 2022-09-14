@@ -567,6 +567,7 @@ describe("/api/users", () => {
         username: "test-upload-1",
         about: "Hello I am a real human person",
         email: "test@test.test",
+        password: "password",
       };
       return request(app)
         .post("/api/users")
@@ -589,6 +590,7 @@ describe("/api/users", () => {
         about: "Hello I am a real human person",
         email: "test@test.test",
         cat: "cat",
+        password: "password",
       };
       return request(app)
         .post("/api/users")
@@ -608,6 +610,7 @@ describe("/api/users", () => {
     test("201: Handles missing unneccesary keys", () => {
       const body = {
         username: "test-upload-1",
+        password: "password",
       };
       return request(app)
         .post("/api/users")
@@ -643,6 +646,7 @@ describe("/api/users", () => {
         username: "test-1",
         about: "Hello I am a real human person",
         email: "test@test.test",
+        password: "password",
       };
       return request(app)
         .post("/api/users")
@@ -754,6 +758,52 @@ describe("/api/users/:username", () => {
         .expect(404)
         .then((res) => {
           expect(res.body.msg).toBe("Not Found");
+        });
+    });
+  });
+
+  describe("POST", () => {
+    test("200: Returns user with valid password", () => {
+      const username = "test-1";
+      const password = { password: "password" };
+      const [test] = data.userData.filter((user) => user.username === username);
+      return request(app)
+        .post(`/api/users/${username}`)
+        .send(password)
+        .expect(200)
+        .then((res) => {
+          const user = res.body.user;
+          expect(user.username).toBe(test.username);
+          expect(user.avatar_url).toBe(test.avatar_url);
+          expect(user.about).toBe(test.about);
+          expect(user.email).toBe(test.email);
+          expect(user.karma).toEqual(expect.any(Number));
+          expect(user.created_at).toEqual(expect.any(String));
+          expect(user.favourites).toEqual(expect.any(Array));
+        });
+    });
+
+    test("401: Returns Invalid Password", () => {
+      const username = "test-1";
+      const password = { password: "password1" };
+      return request(app)
+        .post(`/api/users/${username}`)
+        .send(password)
+        .expect(401)
+        .then((res) => {
+          expect(res.body.msg).toBe("Password Incorrect");
+        });
+    });
+
+    test("404: User not found", () => {
+      const username = "test-100";
+      const password = { password: "password" };
+      return request(app)
+        .post(`/api/users/${username}`)
+        .send(password)
+        .expect(404)
+        .then((res) => {
+          expect(res.body.msg).toBe("User Not Found");
         });
     });
   });
